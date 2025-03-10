@@ -4,12 +4,13 @@ using RentACar.Infrastructure.Data.Models;
 
 namespace RentACar.Infrastructure.Data
 {
-    class ApplicationDbContext:IdentityDbContext<User>
+     public class ApplicationDbContext : IdentityDbContext<User>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
+
+        public ApplicationDbContext(DbContextOptions options) : base(options)
         {
         }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

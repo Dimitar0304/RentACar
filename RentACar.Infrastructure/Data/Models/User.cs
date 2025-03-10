@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNet.Identity.EntityFramework;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace RentACar.Infrastructure.Data.Models
 {
-    class User:IdentityUser
+    public class User:IdentityUser
     {
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
