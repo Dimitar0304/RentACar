@@ -1,0 +1,6 @@
+﻿namespace RentACar.Core.Models.CarDto
+{
+    public class CarAllViewModel
+    {
+    }
+}
