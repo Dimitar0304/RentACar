@@ -1,0 +1,47 @@
+﻿@model CarViewModel
+
+<div class="row">
+    <div class="col-sm-12 offset-lg-2 col-lg-8 offset-xl-3 col-xl-6">
+        <form asp-action="AddCar" method="post">
+            <div class="mb-3">
+                <label asp-for="@Model.Make" class="form-label-add-edit">Car Make</label>
+                <input asp-for="@Model.Make" class="form-control" aria-required="true" placeholder="Mercedess,BMW,Audi,Honda,VW"/>
+                <span asp-validation-for="@Model.Make" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="@Model.Model" class="form-label-add-edit">Car Model</label>
+                <input asp-for="@Model.Model" class="form-control" aria-required="true" placeholder="e60,c220,A6,Accord,Golf" />
+                <span asp-validation-for="@Model.Model" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="@Model.ImageUrl" class="form-label-add-edit">Car image</label>
+                <input asp-for="@Model.ImageUrl" class="form-control" aria-required="true" placeholder="Car image url" />
+                <span asp-validation-for="@Model.ImageUrl" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="@Model.Mileage" class="form-label-add-edit">Car Mileage</label>
+                <input asp-for="@Model.Mileage" class="form-control" aria-required="true"/>
+                <span asp-validation-for="@Model.Mileage" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="@Model.Hp" class="form-label-add-edit">Car horse power</label>
+                <input asp-for="@Model.Hp" class="form-control" aria-required="true" placeholder="e60,c220,A6,Accord,Golf" />
+                <span asp-validation-for="@Model.Hp" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="@Model.CategoryId" class="form-label-add-edit">Select car category</label>
+                <select asp-for="@Model.CategoryId" class="form-control" aria-required="true">
+                    <option disabled selected value="">Select car category...</option>
+                    @foreach (var brand in Model.Categories)
+                    {
+                        <option value="@brand.Id">@brand.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="@Model.CategoryId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <input class="btn btn-outline-danger mb-2 w-100 p-3 fw-bold" type="submit" value="Add Car to app" />
+            </div>
+        </form>
+    </div>
+</div>

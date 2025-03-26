@@ -10,8 +10,9 @@ namespace RentACar.Core.Models.CarDto
         public int Hp { get; set; }
         public bool IsRented { get; set; }
         public int CategoryId { get; set; }
-        public CategoryViewModel Category { get; set; } = null!;
         public int Mileage { get; set; }
-        public IEnumerable<CategoryViewModel> Categories { get; set; } = null!;
+
+        public string ImageUrl { get; set; } = null!;
+        public IEnumerable<CategoryViewModel> Categories { get; set; } = new List<CategoryViewModel>();
     }
 }

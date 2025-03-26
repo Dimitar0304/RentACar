@@ -61,5 +61,11 @@ namespace RentACar.Infrastructure.Data.Models.Vehicle
         /// </summary>
         [Required]
         public Category Category { get; set; }
+
+        /// <summary>
+        /// Car image
+        /// </summary>
+        [Required]
+        public string ImageUrl { get; set; } = null!;
     }
 }

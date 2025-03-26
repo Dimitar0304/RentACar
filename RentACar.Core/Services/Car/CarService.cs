@@ -1,4 +1,5 @@
-﻿using RentACar.Core.Models.CarDto;
+﻿using Microsoft.EntityFrameworkCore;
+using RentACar.Core.Models.CarDto;
 using RentACar.Core.Models.CategoryDto;
 using RentACar.Core.Services.Contracts;
 using RentACar.Infrastructure.Data;
@@ -6,7 +7,7 @@ using RentACar.Infrastructure.Data.Models.Vehicle;
 
 namespace RentACar.Core.Services.CarDto
 {
-    class CarService : ICarService
+    public class CarService : ICarService
     {
         private readonly RentCarDbContext dbContext;
         public CarService(RentCarDbContext context)
@@ -19,18 +20,13 @@ namespace RentACar.Core.Services.CarDto
             {
                 var c = new Car()
                 {
-                   Id=car.Id,
                    Model = car.Model,
                    Make = car.Make,
-                   Category= new Category()
-                   {
-                       Id = car.CategoryId,
-                       Name = car.Category.Name
-                   },
                    CategoryId = car.CategoryId,
                    Hp = car.Hp,
-                   IsRented = car.IsRented,
-                   Mileage = car.Mileage
+                   IsRented =false,
+                   Mileage = car.Mileage,
+                   ImageUrl=car.ImageUrl
                 };
 
               await dbContext.AddAsync(c);
@@ -53,9 +49,13 @@ namespace RentACar.Core.Services.CarDto
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<CategoryViewModel>> GetAllCategories()
+        public async Task<IEnumerable<CategoryViewModel>> GetAllCategories()
         {
-            throw new NotImplementedException();
+            return await dbContext.Categories.Select(c => new CategoryViewModel()
+            {
+                Id = c.Id,
+                Name = c.Name
+            }).ToListAsync();
         }
 
         public Task<CarViewModel> GetCarByIdAsync(int carId)
@@ -65,7 +65,14 @@ namespace RentACar.Core.Services.CarDto
 
         public bool IsCarExistInDb(CarViewModel car)
         {
-            throw new NotImplementedException();
+            if (dbContext.Cars.FirstOrDefault(c=>c.Id ==car.Id)!=null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public Task UpdateCarAsync(CarViewModel car)

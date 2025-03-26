@@ -13,12 +13,12 @@ namespace RentACar.Infrastructure.Data.Seed
         public async Task SeedAsync()
         {
             dbcontext.AddRange(
-                new Category { Id = 1, Name = "Mini" },
-                new Category { Id = 2, Name = "Sedan" },
-                new Category { Id = 3, Name = "Combi" },
-                new Category { Id = 4, Name = "Van" },
-                new Category { Id = 5, Name = "Luxury" },
-                new Category { Id = 6, Name = "SUV" }
+                new Category {  Name = "Mini" },
+                new Category {  Name = "Sedan" },
+                new Category {  Name = "Combi" },
+                new Category { Name = "Van" },
+                new Category { Name = "Luxury" },
+                new Category { Name = "SUV" }
                 );
             await dbcontext.SaveChangesAsync();
         }

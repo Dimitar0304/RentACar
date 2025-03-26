@@ -2,8 +2,9 @@
 using RentACar.Core.Models.CarDto;
 using RentACar.Core.Services.Contracts;
 
-namespace RentACar.Controllers.CarController
+namespace RentACar.Controllers
 {
+    
     public class CarController:Controller
     {
         private readonly ICarService service;

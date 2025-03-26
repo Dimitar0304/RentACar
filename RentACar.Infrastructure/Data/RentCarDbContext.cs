@@ -26,6 +26,8 @@ namespace RentACar.Infrastructure.Data
                 .WithMany(c => c.Cars)
                 .HasForeignKey(c => c.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+          
         }
     }
 }

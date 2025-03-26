@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using RentACar.Data;
+using RentACar.Core.Services.CarDto;
+using RentACar.Core.Services.Contracts;
 using RentACar.Infrastructure.Data;
 using RentACar.Infrastructure.Data.Seed;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +27,7 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<ISeeder, CategorySeeder>();
 builder.Services.AddScoped<ApplicationSeeder>();
+builder.Services.AddTransient<ICarService, CarService>();
 
 var app = builder.Build();
 
@@ -47,5 +50,11 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+
+using (var scope = app.Services.CreateScope())
+{
+    var seeder = scope.ServiceProvider.GetRequiredService<ApplicationSeeder>();
+    await seeder.SeedAsync();
+}
 
 app.Run();
