@@ -1,0 +1,14 @@
+﻿@model IEnumerable<CarAllViewModel>
+
+
+@foreach (var car in Model)
+{
+
+    <div class="card">
+        <h3>@car.Make </h3>
+        <h3>@car.Model </h3>
+        <p>@car.Hp</p>
+        <img src="@car.ImageUrl" width="200" />
+
+    </div>
+}

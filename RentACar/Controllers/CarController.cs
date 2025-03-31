@@ -4,8 +4,8 @@ using RentACar.Core.Services.Contracts;
 
 namespace RentACar.Controllers
 {
-    
-    public class CarController:Controller
+
+    public class CarController : Controller
     {
         private readonly ICarService service;
         public CarController(ICarService carService)
@@ -44,8 +44,22 @@ namespace RentACar.Controllers
             else
             {
                 await service.AddCarAsync(car);
+                return RedirectToAction("Index","Home");
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> All()
+        {
+            var models = await service.GetAllCarsAsync();
+            if (models != null)
+            {
+                return View(models);
+            }
+            else
+            {
                 return RedirectToAction("Home");
             }
+
         }
     }
 }

@@ -44,9 +44,28 @@ namespace RentACar.Core.Services.CarDto
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<CarAllViewModel>> GetAllCarsAsync()
+        public async Task<IEnumerable<CarAllViewModel>> GetAllCarsAsync()
         {
-            throw new NotImplementedException();
+            if (dbContext.Cars.ToListAsync()!=null)
+            {
+                var cars =await dbContext.Cars
+                    .Select(c => new CarAllViewModel()
+                    {
+                        Make = c.Make,
+                        Model = c.Model,
+                        Category = c.Category.Name,
+                        Hp = c.Hp,
+                        ImageUrl = c.ImageUrl,
+                        IsRented = c.IsRented,
+                        Mileage = c.Mileage
+                    })
+                    .ToListAsync();
+                return  cars;
+            }
+            else
+            {
+                return new List<CarAllViewModel>();
+            }
         }
 
         public async Task<IEnumerable<CategoryViewModel>> GetAllCategories()
