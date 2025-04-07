@@ -9,6 +9,9 @@
         <h3>@car.Model </h3>
         <p>@car.Hp</p>
         <img src="@car.ImageUrl" width="200" />
+        <a asp-action="Edit" asp-route-id="@car.Id" class="btn btn-warning">
+            Edit Car
+        </a>
 
     </div>
 }

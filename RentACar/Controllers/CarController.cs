@@ -61,5 +61,31 @@ namespace RentACar.Controllers
             }
 
         }
+        public async Task<IActionResult> Edit(int id)
+        {
+            if (await service.GetCarByIdAsync(id)==null)
+            {
+                return BadRequest();
+            }
+            CarViewModel car = await service.GetCarByIdAsync(id);
+            car.Categories = await service.GetAllCategories();
+
+            return View("Edit", car);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Edit(CarViewModel car)
+        {
+            if (car ==null)
+            {
+                return BadRequest();
+            }
+            if (ModelState.IsValid==false)
+            {
+                car.Categories = await service.GetAllCategories();
+                return View(car);
+            }
+            await service.UpdateCarAsync(car);
+            return RedirectToAction("All", "Car");
+        }
     }
 }

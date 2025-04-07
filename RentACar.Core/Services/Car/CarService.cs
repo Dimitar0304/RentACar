@@ -46,11 +46,12 @@ namespace RentACar.Core.Services.CarDto
 
         public async Task<IEnumerable<CarAllViewModel>> GetAllCarsAsync()
         {
-            if (dbContext.Cars.ToListAsync()!=null)
+            if (await dbContext.Cars.ToListAsync()!=null)
             {
-                var cars =await dbContext.Cars
+                var cars = await dbContext.Cars
                     .Select(c => new CarAllViewModel()
                     {
+                        Id=c.Id,
                         Make = c.Make,
                         Model = c.Model,
                         Category = c.Category.Name,
@@ -77,9 +78,22 @@ namespace RentACar.Core.Services.CarDto
             }).ToListAsync();
         }
 
-        public Task<CarViewModel> GetCarByIdAsync(int carId)
+        public async Task<CarViewModel> GetCarByIdAsync(int carId)
         {
-            throw new NotImplementedException();
+            return await dbContext.Cars
+                 .Select(c => new CarViewModel
+                 {
+                     Id = carId,
+                     Make = c.Make,
+                     Model = c.Model,
+                     CategoryId = c.CategoryId,
+                     Hp = c.Hp,
+                     ImageUrl = c.ImageUrl,
+                     IsRented = c.IsRented,
+                     Mileage = c.Mileage
+                 })
+                 .FirstOrDefaultAsync(c => c.Id == carId);
+                
         }
 
         public bool IsCarExistInDb(CarViewModel car)
@@ -94,9 +108,21 @@ namespace RentACar.Core.Services.CarDto
             }
         }
 
-        public Task UpdateCarAsync(CarViewModel car)
+        public async Task UpdateCarAsync(CarViewModel car)
         {
-            throw new NotImplementedException();
+            Car carToEdit = await dbContext.Cars.FirstOrDefaultAsync(c => c.Id == car.Id);
+            if (carToEdit!=null)
+            {
+                carToEdit.Make = car.Make;
+                carToEdit.Model = car.Model;
+                carToEdit.Hp = car.Hp;
+                carToEdit.IsRented = car.IsRented;
+                carToEdit.CategoryId = car.CategoryId;
+                carToEdit.ImageUrl = car.ImageUrl;
+                carToEdit.Mileage = car.Mileage;
+            }
+           dbContext.Cars.Update(carToEdit);
+          await dbContext.SaveChangesAsync();
         }
     }
 }

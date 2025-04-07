@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client.Core" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\RentACar.Infrastructure\RentACar.Infrastructure.csproj" />
   </ItemGroup>
 
