@@ -67,5 +67,11 @@ namespace RentACar.Infrastructure.Data.Models.Vehicle
         /// </summary>
         [Required]
         public string ImageUrl { get; set; } = null!;
+
+        /// <summary>
+        /// Price per day
+        /// </summary>
+        [Required]
+        public int PricePerDay { get; set; }
     }
 }

@@ -18,5 +18,7 @@ namespace RentACar.Core.Models.CarDto
 
         public bool IsRented { get; set; }
 
+        public int PricePerDay { get; set; }
+
     }
 }

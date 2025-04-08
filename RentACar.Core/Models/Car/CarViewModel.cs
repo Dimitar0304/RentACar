@@ -13,6 +13,7 @@ namespace RentACar.Core.Models.CarDto
         public int Mileage { get; set; }
 
         public string ImageUrl { get; set; } = null!;
+        public int PricePerDay { get; set; }
         public IEnumerable<CategoryViewModel> Categories { get; set; } = new List<CategoryViewModel>();
     }
 }

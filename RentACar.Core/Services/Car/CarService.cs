@@ -26,7 +26,8 @@ namespace RentACar.Core.Services.CarDto
                    Hp = car.Hp,
                    IsRented =false,
                    Mileage = car.Mileage,
-                   ImageUrl=car.ImageUrl
+                   ImageUrl=car.ImageUrl,
+                   PricePerDay = car.PricePerDay
                 };
 
               await dbContext.AddAsync(c);
@@ -58,7 +59,8 @@ namespace RentACar.Core.Services.CarDto
                         Hp = c.Hp,
                         ImageUrl = c.ImageUrl,
                         IsRented = c.IsRented,
-                        Mileage = c.Mileage
+                        Mileage = c.Mileage,
+                        PricePerDay = c.PricePerDay
                     })
                     .ToListAsync();
                 return  cars;
@@ -90,7 +92,8 @@ namespace RentACar.Core.Services.CarDto
                      Hp = c.Hp,
                      ImageUrl = c.ImageUrl,
                      IsRented = c.IsRented,
-                     Mileage = c.Mileage
+                     Mileage = c.Mileage,
+                     PricePerDay = c.PricePerDay
                  })
                  .FirstOrDefaultAsync(c => c.Id == carId);
                 
@@ -120,6 +123,7 @@ namespace RentACar.Core.Services.CarDto
                 carToEdit.CategoryId = car.CategoryId;
                 carToEdit.ImageUrl = car.ImageUrl;
                 carToEdit.Mileage = car.Mileage;
+                carToEdit.PricePerDay = car.PricePerDay;
             }
            dbContext.Cars.Update(carToEdit);
           await dbContext.SaveChangesAsync();
