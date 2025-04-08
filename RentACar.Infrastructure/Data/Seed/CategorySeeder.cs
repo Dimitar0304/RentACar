@@ -1,5 +1,4 @@
-﻿
-using RentACar.Infrastructure.Data.Models.Vehicle;
+﻿using RentACar.Infrastructure.Data.Models.Vehicle;
 
 namespace RentACar.Infrastructure.Data.Seed
 {
@@ -12,15 +11,18 @@ namespace RentACar.Infrastructure.Data.Seed
         }
         public async Task SeedAsync()
         {
-            dbcontext.AddRange(
-                new Category {  Name = "Mini" },
-                new Category {  Name = "Sedan" },
-                new Category {  Name = "Combi" },
+            if (!dbcontext.Categories.Any())
+            {
+                dbcontext.AddRange(
+                new Category { Name = "Mini" },
+                new Category { Name = "Sedan" },
+                new Category { Name = "Combi" },
                 new Category { Name = "Van" },
                 new Category { Name = "Luxury" },
                 new Category { Name = "SUV" }
                 );
-            await dbcontext.SaveChangesAsync();
+             await dbcontext.SaveChangesAsync();
+            }
         }
     }
 }

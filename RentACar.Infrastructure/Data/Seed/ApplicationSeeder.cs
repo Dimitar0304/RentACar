@@ -1,4 +1,6 @@
-﻿namespace RentACar.Infrastructure.Data.Seed
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace RentACar.Infrastructure.Data.Seed
 {
     public class ApplicationSeeder
     {
@@ -10,10 +12,12 @@
         }
         public async Task SeedAsync()
         {
-            foreach (var seeder in seeders)
-            {
-                await seeder.SeedAsync();
-            }
+            
+                foreach (var seeder in seeders)
+                {
+                    await seeder.SeedAsync();
+                }
+            
         }
     }
 }
