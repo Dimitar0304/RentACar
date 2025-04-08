@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using RentACar.Core.Services.CarDto;
+using RentACar.Core.Services.Chat;
 using RentACar.Core.Services.Contracts;
 using RentACar.Infrastructure.Data;
 using RentACar.Infrastructure.Data.Seed;
@@ -25,9 +27,17 @@ builder.Services.AddDefaultIdentity<IdentityUser>(opt=>
     .AddEntityFrameworkStores<RentCarDbContext>();
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddSignalR();
+
 builder.Services.AddScoped<ISeeder, CategorySeeder>();
 builder.Services.AddScoped<ApplicationSeeder>();
 builder.Services.AddTransient<ICarService, CarService>();
+builder.Services.AddTransient<IChatService, ChatHubModel>();
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+        ["application/octet-stream"]);
+});
 
 var app = builder.Build();
 
@@ -46,9 +56,12 @@ app.UseHttpsRedirection().
     UseRouting().
     UseAuthorization();
 
+app.UseResponseCompression();
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapHub<ChatHubModel>("/chathub");
 app.MapRazorPages();
 
 using (var scope = app.Services.CreateScope())
