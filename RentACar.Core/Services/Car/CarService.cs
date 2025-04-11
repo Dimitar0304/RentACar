@@ -35,11 +35,15 @@ namespace RentACar.Core.Services.CarDto
             }
         }
 
-        public Task DeleteCarAsync(int carId)
+        public async Task DeleteCarAsync(int carId)
         {
-            throw new NotImplementedException();
+            var car = await dbContext.Cars.FirstOrDefaultAsync(c => c.Id == carId);
+            if (car!=null)
+            {
+                dbContext.Remove(car);
+               await dbContext.SaveChangesAsync();
+            }
         }
-
         public Task<IEnumerable<CarBrandViewModel>> GetAllCarBrandsAsync()
         {
             throw new NotImplementedException();
@@ -98,7 +102,6 @@ namespace RentACar.Core.Services.CarDto
                  .FirstOrDefaultAsync(c => c.Id == carId);
                 
         }
-
         public bool IsCarExistInDb(CarViewModel car)
         {
             if (dbContext.Cars.FirstOrDefault(c=>c.Id ==car.Id)!=null)
@@ -110,7 +113,6 @@ namespace RentACar.Core.Services.CarDto
                 return false;
             }
         }
-
         public async Task UpdateCarAsync(CarViewModel car)
         {
             Car carToEdit = await dbContext.Cars.FirstOrDefaultAsync(c => c.Id == car.Id);

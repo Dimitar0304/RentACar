@@ -87,5 +87,15 @@ namespace RentACar.Controllers
             await service.UpdateCarAsync(car);
             return RedirectToAction("All", "Car");
         }
+        public async Task<IActionResult> Delete(int id)
+        {
+            if (id==0||service.GetCarByIdAsync(id)==null)
+            {
+                return BadRequest();
+            }
+            await service.DeleteCarAsync(id);
+
+            return RedirectToAction("Index", "Home");
+        }
     }
 }
