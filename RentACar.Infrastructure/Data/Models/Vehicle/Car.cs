@@ -1,5 +1,7 @@
 ﻿using RentACar.Infrastructure.Data.Models.Interfaces;
+using RentACar.Infrastructure.Data.Models.User;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RentACar.Infrastructure.Data.Models.Vehicle
 {
@@ -54,6 +56,7 @@ namespace RentACar.Infrastructure.Data.Models.Vehicle
         /// Car category identifier
         /// </summary>
         [Required]
+        [ForeignKey(nameof(Category))]
         public int CategoryId { get; set; }
 
         /// <summary>
@@ -73,5 +76,7 @@ namespace RentACar.Infrastructure.Data.Models.Vehicle
         /// </summary>
         [Required]
         public int PricePerDay { get; set; }
+
+        public RentBill RentBill { get; set; } = null!; 
     }
 }

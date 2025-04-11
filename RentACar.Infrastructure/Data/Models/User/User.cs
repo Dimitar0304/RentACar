@@ -11,5 +11,7 @@ namespace RentACar.Infrastructure.Data.Models.User
         public string Phone { get; set; } = null!;
         public DateTime DateRegistered { get; set; } = DateTime.UtcNow;
 
+        public ICollection<RentBill> RentBills { get; set; } = new List<RentBill>();
+
     }
 }

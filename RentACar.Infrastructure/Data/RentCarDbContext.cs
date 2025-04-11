@@ -2,16 +2,19 @@
 using Microsoft.EntityFrameworkCore;
 using RentACar.Infrastructure.Data.Models.User;
 using RentACar.Infrastructure.Data.Models.Vehicle;
+using System.Reflection.Emit;
 
 namespace RentACar.Infrastructure.Data
 {
-     public class RentCarDbContext : IdentityDbContext<User>
+    public class RentCarDbContext : IdentityDbContext<User>
     {
 
         public RentCarDbContext(DbContextOptions<RentCarDbContext> options) : base(options)
         {
         }
         public DbSet<User> Users { get; set; } = null!;
+
+        public DbSet<RentBill> Bills { get; set; } = null!;
 
         public DbSet<Category> Categories { get; set; } = null!;
 
@@ -26,6 +29,12 @@ namespace RentACar.Infrastructure.Data
                 .WithMany(c => c.Cars)
                 .HasForeignKey(c => c.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+           builder.Entity<Car>()
+                .HasOne(c => c.RentBill)
+                .WithOne(rb => rb.Car)
+                .HasForeignKey<RentBill>(rb => rb.CarId);
+
         }
     }
 }

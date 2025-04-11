@@ -10,5 +10,10 @@
             public const int MakeMinLenght = 2;
             public const int MakeMaxLenght = 20;
         }
+        public static class RentBill
+        {
+            public const int TownMinLenght = 2;
+            public const int TownMaxLenght = 30;
+        }
     }
 }

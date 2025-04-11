@@ -7,6 +7,7 @@ namespace RentACar.Infrastructure.Data.Models.Vehicle
         /// <summary>
         /// Car category id
         /// </summary>
+        [Key]
         [Required]
         public int Id { get; set; }
 
@@ -19,6 +20,6 @@ namespace RentACar.Infrastructure.Data.Models.Vehicle
         /// <summary>
         /// Navigation property
         /// </summary>
-        public IEnumerable<Car> Cars { get; set; } = null!;
+        public ICollection<Car> Cars { get; set; } = new List<Car>();
     }
 }
