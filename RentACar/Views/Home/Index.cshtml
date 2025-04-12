@@ -1,8 +1,135 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Welcome to RentACar";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="hero-section">
+    <div class="container">
+        <h1 class="display-3 text-white mb-4">Find Your Perfect Ride</h1>
+        <p class="lead text-white mb-4">Discover our wide selection of vehicles for any occasion</p>
+        <a href="/Cars" class="btn btn-primary btn-lg">Browse Cars</a>
+    </div>
 </div>
+
+<div class="container mt-5">
+    <div class="row features-section">
+        <div class="col-md-4 mb-4">
+            <div class="feature-card">
+                <i class="fas fa-car fa-3x mb-3 text-primary"></i>
+                <h3>Wide Selection</h3>
+                <p>Choose from our diverse fleet of vehicles, from economy to luxury</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="feature-card">
+                <i class="fas fa-dollar-sign fa-3x mb-3 text-primary"></i>
+                <h3>Best Prices</h3>
+                <p>Competitive rates and special offers for both short and long-term rentals</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="feature-card">
+                <i class="fas fa-headset fa-3x mb-3 text-primary"></i>
+                <h3>24/7 Support</h3>
+                <p>Our customer service team is always here to help you</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="how-it-works mt-5">
+        <h2 class="text-center mb-5">How It Works</h2>
+        <div class="row">
+            <div class="col-md-3 text-center">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h4>Choose a Car</h4>
+                    <p>Browse our selection and find your perfect vehicle</p>
+                </div>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h4>Pick Date & Time</h4>
+                    <p>Select your preferred pickup and return schedule</p>
+                </div>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h4>Book Online</h4>
+                    <p>Complete your reservation with our secure booking system</p>
+                </div>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <h4>Enjoy Your Ride</h4>
+                    <p>Pick up your car and start your journey</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+<style>
+    .hero-section {
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/images/hero-car.jpg');
+        background-size: cover;
+        background-position: center;
+        padding: 150px 0;
+        margin-bottom: 50px;
+        text-align: center;
+    }
+
+    .feature-card {
+        padding: 30px;
+        text-align: center;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+    }
+
+    .step-card {
+        padding: 20px;
+        margin: 10px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .step-number {
+        width: 40px;
+        height: 40px;
+        background: #007bff;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .how-it-works h2 {
+        position: relative;
+        padding-bottom: 15px;
+    }
+
+    .how-it-works h2:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 3px;
+        background: #007bff;
+    }
+</style>

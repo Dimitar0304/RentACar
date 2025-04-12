@@ -1,0 +1,65 @@
+.chat-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    background: white;
+}
+
+.chat-header {
+    background: #007bff;
+    color: white;
+    padding: 1rem;
+    border-radius: 10px 10px 0 0;
+    text-align: center;
+}
+
+.chat-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.chat-messages {
+    height: 400px;
+    overflow-y: auto;
+    padding: 1rem;
+    background: #f8f9fa;
+}
+
+.messages-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.messages-list li {
+    background: white;
+    padding: 0.8rem 1rem;
+    border-radius: 15px;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fade-in-message 0.3s ease-in forwards;
+}
+
+.chat-input-area {
+    padding: 1rem;
+    border-top: 1px solid #dee2e6;
+}
+
+.btn-primary {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+@-webkit-keyframes fade-in-message {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in-message {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+} 
