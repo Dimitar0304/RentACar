@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RentACar.Core.Services.Contracts;
 
 namespace RentACar.Controllers
 {
+    
     public class ChatController:Controller
     {
         private readonly IChatService chatService;
@@ -11,7 +13,7 @@ namespace RentACar.Controllers
         {
             chatService = _chatService;
         }
-
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             return View();

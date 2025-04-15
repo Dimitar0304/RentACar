@@ -1,17 +1,68 @@
 ﻿@model IEnumerable<CarAllViewModel>
 
-
-@foreach (var car in Model)
-{
-
-    <div class="card">
-        <h3>@car.Make </h3>
-        <h3>@car.Model </h3>
-        <p>@car.Hp</p>
-        <img src="@car.ImageUrl" width="200" />
-        <a asp-action="Edit" asp-route-id="@car.Id" class="btn btn-warning">
-            Edit Car
-        </a>
-
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Our Car Collection</h2>
+    
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var car in Model)
+        {
+            <div class="col">
+                <div class="car-card">
+                    <div class="car-image-wrapper">
+                        <img src="@car.ImageUrl" class="car-image" alt="@car.Make @car.Model" />
+                        <div class="car-overlay">
+                            <a asp-action="Details" asp-route-id="@car.Id" class="btn btn-light btn-sm">
+                                <i class="fas fa-info-circle"></i> View Details
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@car.Id" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Edit Car
+                            </a>
+                        </div>
+                    </div>
+                    <div class="car-content">
+                        <h3 class="car-title">@car.Make @car.Model</h3>
+                        <div class="car-specs">
+                            <span class="spec">
+                                <i class="fas fa-horse"></i> @car.Hp HP
+                            </span>
+                            <span class="spec">
+                                <i class="fas fa-tag"></i> $@car.PricePerDay/day
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
-}
+
+    @{
+        var prevDisabled = !Model.Any() || Model.Count() < 7 ? "disabled" : "";
+        var nextDisabled = !Model.Any() || Model.Count() < 7 ? "disabled" : "";
+    }
+
+    <div class="d-flex justify-content-center mt-4">
+        <nav aria-label="Car pagination">
+            <ul class="pagination">
+                <li class="page-item @prevDisabled">
+                    <a class="page-link" asp-action="All" asp-route-page="@(ViewBag.CurrentPage - 1)">
+                        <i class="fas fa-chevron-left"></i> Previous
+                    </a>
+                </li>
+                @if (ViewBag.CurrentPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="All" asp-route-page="1">1</a>
+                    </li>
+                }
+                <li class="page-item active">
+                    <span class="page-link">@ViewBag.CurrentPage</span>
+                </li>
+                <li class="page-item @nextDisabled">
+                    <a class="page-link" asp-action="All" asp-route-page="@(ViewBag.CurrentPage + 1)">
+                        Next <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>

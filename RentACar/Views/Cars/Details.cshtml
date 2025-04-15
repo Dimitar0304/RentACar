@@ -1,0 +1,74 @@
+@model RentACar.Core.Models.CarDto.CarViewModel
+
+@{
+    ViewData["Title"] = $"{Model.Make} {Model.Model} Details";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <!-- Car Image -->
+        <div class="col-md-6">
+            <div class="car-image-container">
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <img src="@Model.ImageUrl" class="img-fluid rounded shadow" alt="@Model.Make @Model.Model">
+                }
+                else
+                {
+                    <div class="no-image-placeholder">
+                        <i class="fas fa-car fa-5x"></i>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Car Details -->
+        <div class="col-md-6">
+            <div class="car-details">
+                <h2 class="mb-4">@Model.Make @Model.Model</h2>
+                
+                <div class="status-badge @(Model.IsRented ? "status-rented" : "status-available") mb-4">
+                    @(Model.IsRented ? "Currently Rented" : "Available")
+                </div>
+
+                <div class="specs-grid">
+                    <div class="spec-item">
+                        <i class="fas fa-money-bill"></i>
+                        <span class="spec-label">Price per Day:</span>
+                        <span class="spec-value">$@Model.PricePerDay</span>
+                    </div>
+
+                    <div class="spec-item">
+                        <i class="fas fa-horse"></i>
+                        <span class="spec-label">Horsepower:</span>
+                        <span class="spec-value">@Model.Hp HP</span>
+                    </div>
+
+                    <div class="spec-item">
+                        <i class="fas fa-road"></i>
+                        <span class="spec-label">Mileage:</span>
+                        <span class="spec-value">@Model.Mileage km</span>
+                    </div>
+
+                    <div class="spec-item">
+                        <i class="fas fa-tag"></i>
+                        <span class="spec-label">Category:</span>
+                        <span class="spec-value">@Model.Categories.FirstOrDefault()?.Name</span>
+                    </div>
+                </div>
+
+                <div class="action-buttons mt-4">
+                    @if (!Model.IsRented)
+                    {
+                        <a href="@Url.Action("Rent", "Cars", new { id = Model.Id })" class="btn btn-primary btn-lg">
+                            <i class="fas fa-key"></i> Rent Now
+                        </a>
+                    }
+                    <a href="@Url.Action("Search", "Cars")" class="btn btn-outline-secondary btn-lg ms-2">
+                        <i class="fas fa-arrow-left"></i> Back to Search
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
