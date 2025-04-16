@@ -31,6 +31,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSignalR();
 
 builder.Services.AddScoped<ISeeder, CategorySeeder>();
+builder.Services.AddScoped<ISeeder, RoleSeeder>();
 builder.Services.AddScoped<ApplicationSeeder>();
 builder.Services.AddTransient<ICarService, CarService>();
 builder.Services.AddTransient<IChatService, ChatHubModel>();

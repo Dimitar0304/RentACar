@@ -3,7 +3,7 @@ using RentACar.Infrastructure.Data.Models.User;
 
 namespace RentACar.Infrastructure.Data.Seed
 {
-    public class RoleSeeder
+    public class RoleSeeder : ISeeder
     {
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<User> _userManager;
