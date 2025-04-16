@@ -1,0 +1,75 @@
+@{
+    ViewData["Title"] = "Admin Dashboard - RentACar";
+}
+
+<div class="admin-banner">
+    <h1 class="text-center">ADMINISTRATOR DASHBOARD</h1>
+</div>
+
+<div class="hero-section">
+    <div class="container">
+        <h1 class="display-3 text-white mb-4">Manage Your Car Rental System</h1>
+        <p class="lead text-white mb-4">Welcome to the administrative interface</p>
+        <a href="/Admin/Car/AddCar" class="btn btn-primary btn-lg">Add New Car</a>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="row features-section">
+        <div class="col-md-4 mb-4">
+            <div class="feature-card">
+                <i class="fas fa-car-alt fa-3x mb-3 text-primary"></i>
+                <h3>Manage Cars</h3>
+                <p>Add, edit, or remove vehicles from your fleet</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="feature-card">
+                <i class="fas fa-users fa-3x mb-3 text-primary"></i>
+                <h3>User Management</h3>
+                <p>Manage user accounts and permissions</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="feature-card">
+                <i class="fas fa-chart-line fa-3x mb-3 text-primary"></i>
+                <h3>Analytics</h3>
+                <p>View rental statistics and reports</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .admin-banner {
+        background-color: #dc3545;
+        color: white;
+        padding: 20px 0;
+        margin-bottom: 20px;
+        font-size: 24px;
+        font-weight: bold;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .hero-section {
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/images/hero-car.jpg');
+        background-size: cover;
+        background-position: center;
+        padding: 100px 0;
+        text-align: center;
+    }
+
+    .feature-card {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+    }
+</style> 

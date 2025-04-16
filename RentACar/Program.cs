@@ -5,8 +5,8 @@ using RentACar.Core.Services.CarDto;
 using RentACar.Core.Services.Chat;
 using RentACar.Core.Services.Contracts;
 using RentACar.Infrastructure.Data;
+using RentACar.Infrastructure.Data.Models.User;
 using RentACar.Infrastructure.Data.Seed;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +15,7 @@ builder.Services.AddDbContext<RentCarDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(opt=>
+builder.Services.AddDefaultIdentity<User>(opt=>
 {
     opt.SignIn.RequireConfirmedAccount = false;
     opt.User.RequireUniqueEmail = true;
@@ -23,8 +23,9 @@ builder.Services.AddDefaultIdentity<IdentityUser>(opt=>
     opt.Password.RequireNonAlphanumeric = false;
     opt.Password.RequireUppercase = false;
 })
-
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<RentCarDbContext>();
+
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSignalR();
@@ -57,6 +58,10 @@ app.UseHttpsRedirection().
     UseAuthorization();
 
 app.UseResponseCompression();
+
+app.MapControllerRoute(
+    name: "areaRoute",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
     name: "default",
