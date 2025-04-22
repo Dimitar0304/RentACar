@@ -57,5 +57,22 @@ namespace RentACar.Infrastructure.Data.Models.User
         /// </summary>
         [Required]
         public Car Car { get; set; } = null!;
+
+        /// <summary>
+        /// Starting mileage when car is rented
+        /// </summary>
+        [Required]
+        public int StartMileage { get; set; }
+
+        /// <summary>
+        /// Ending mileage when car is returned
+        /// </summary>
+        public int? EndMileage { get; set; }
+
+        /// <summary>
+        /// Total kilometers driven during rental
+        /// </summary>
+        [NotMapped]
+        public int KilometersDriven => EndMileage.HasValue ? EndMileage.Value - StartMileage : 0;
     }
 }

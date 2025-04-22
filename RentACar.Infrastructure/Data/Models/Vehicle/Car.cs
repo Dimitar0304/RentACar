@@ -24,7 +24,7 @@ namespace RentACar.Infrastructure.Data.Models.Vehicle
         [Required]
         [MinLength(DataConstants.Car.MakeMinLenght)]
         [MaxLength(DataConstants.Car.MakeMaxLenght)]
-        public string Make { get; set; } = null!;
+        public required string Make { get; set; }
 
         /// <summary>
         /// Car model property
@@ -32,7 +32,7 @@ namespace RentACar.Infrastructure.Data.Models.Vehicle
         [Required]
         [MinLength(DataConstants.Car.ModelMinLenght)]
         [MaxLength(DataConstants.Car.ModelMaxLenght)]
-        public string Model { get; set; } = null!;
+        public required string Model { get; set; }
 
         /// <summary>
         /// Car horse power property
@@ -63,13 +63,13 @@ namespace RentACar.Infrastructure.Data.Models.Vehicle
         /// Car category
         /// </summary>
         [Required]
-        public Category Category { get; set; }
+        public required Category Category { get; set; }
 
         /// <summary>
         /// Car image
         /// </summary>
         [Required]
-        public string ImageUrl { get; set; } = null!;
+        public required string ImageUrl { get; set; }
 
         /// <summary>
         /// Price per day
@@ -77,6 +77,11 @@ namespace RentACar.Infrastructure.Data.Models.Vehicle
         [Required]
         public int PricePerDay { get; set; }
 
-        public RentBill RentBill { get; set; } = null!; 
+        public required RentBill RentBill { get; set; }
+
+        /// <summary>
+        /// Car maintenance metrics
+        /// </summary>
+        public required CarMetrics Metrics { get; set; }
     }
 }
