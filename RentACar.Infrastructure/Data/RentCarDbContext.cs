@@ -20,6 +20,8 @@ namespace RentACar.Infrastructure.Data
 
         public DbSet<Car> Cars { get; set; } = null!;
 
+        public DbSet<CarMetrics> CarMetrics { get; set; } = null!;
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -34,6 +36,11 @@ namespace RentACar.Infrastructure.Data
                 .HasOne(c => c.RentBill)
                 .WithOne(rb => rb.Car)
                 .HasForeignKey<RentBill>(rb => rb.CarId);
+
+           builder.Entity<Car>()
+                .HasOne(c => c.Metrics)
+                .WithOne(m => m.Car)
+                .HasForeignKey<CarMetrics>(m => m.CarId);
 
         }
     }

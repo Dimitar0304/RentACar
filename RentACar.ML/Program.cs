@@ -11,6 +11,9 @@ builder.Services.AddSwaggerGen();
 // Register ML services
 builder.Services.AddSingleton<IMaintenancePredictionService, MaintenancePredictionService>();
 
+// Register maintenance monitoring service
+builder.Services.AddScoped<IMaintenanceMonitoringService, MaintenanceMonitoringService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
