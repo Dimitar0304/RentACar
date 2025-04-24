@@ -2,7 +2,7 @@
 
 namespace RentACar.Infrastructure.Data.Models.User
 {
-    public class User:IdentityUser
+    public class ApplicationUser : IdentityUser
     {
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
@@ -12,6 +12,5 @@ namespace RentACar.Infrastructure.Data.Models.User
         public DateTime DateRegistered { get; set; } = DateTime.UtcNow;
 
         public ICollection<RentBill> RentBills { get; set; } = new List<RentBill>();
-
     }
 }

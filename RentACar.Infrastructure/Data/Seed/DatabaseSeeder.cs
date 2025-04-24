@@ -1,32 +1,31 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
 using RentACar.Infrastructure.Data.Models.User;
+using RentACar.Infrastructure.Data.Models.Vehicle;
 
 namespace RentACar.Infrastructure.Data.Seed
 {
-    public class DatabaseSeeder : ISeeder
+    public class DatabaseSeeder
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly RentCarDbContext _context;
 
-        public DatabaseSeeder(IServiceProvider serviceProvider, RentCarDbContext context)
+        public DatabaseSeeder(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
-            _context = context;
         }
 
         public async Task SeedAsync()
         {
-            // Order is important for data dependencies
             var seeders = new List<ISeeder>
             {
                 new RoleSeeder(
                     _serviceProvider.GetRequiredService<RoleManager<IdentityRole>>(),
-                    _serviceProvider.GetRequiredService<UserManager<User>>()
+                    _serviceProvider.GetRequiredService<UserManager<ApplicationUser>>()
                 ),
-                new CategorySeeder(_context),
-                new CarMetricsSeeder(_context),
-                new RentBillSeeder(_context)
+                new CategorySeeder(_serviceProvider.GetRequiredService<RentCarDbContext>()),
+                new CarSeeder(_serviceProvider.GetRequiredService<RentCarDbContext>()),
+                new CarMetricsSeeder(_serviceProvider.GetRequiredService<RentCarDbContext>()),
+                new RentBillSeeder(_serviceProvider.GetRequiredService<RentCarDbContext>())
             };
 
             foreach (var seeder in seeders)

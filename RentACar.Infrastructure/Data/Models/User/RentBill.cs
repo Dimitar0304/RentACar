@@ -29,8 +29,7 @@ namespace RentACar.Infrastructure.Data.Models.User
         /// <summary>
         /// Date of returning rent
         /// </summary>
-        [Required]
-        public DateTime DateOfReturn { get; set; }
+        public DateTime? DateOfReturn { get; set; }
 
         /// <summary>
         /// User identifier
@@ -43,7 +42,7 @@ namespace RentACar.Infrastructure.Data.Models.User
         /// User of rent
         /// </summary>
         [Required]
-        public User User { get; set; } = null!;
+        public ApplicationUser User { get; set; } = null!;
 
         /// <summary>
         /// Car identifier
@@ -68,6 +67,13 @@ namespace RentACar.Infrastructure.Data.Models.User
         /// Ending mileage when car is returned
         /// </summary>
         public int? EndMileage { get; set; }
+
+        /// <summary>
+        /// Total price for the rental
+        /// </summary>
+        [Required]
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal TotalPrice { get; set; }
 
         /// <summary>
         /// Total kilometers driven during rental

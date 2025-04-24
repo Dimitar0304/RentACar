@@ -12,8 +12,8 @@ using RentACar.Infrastructure.Data;
 namespace RentACar.Infrastructure.Migrations
 {
     [DbContext(typeof(RentCarDbContext))]
-    [Migration("20250416104237_AddIdentityAndRoles")]
-    partial class AddIdentityAndRoles
+    [Migration("20250424095733_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -105,12 +105,10 @@ namespace RentACar.Infrastructure.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -147,12 +145,10 @@ namespace RentACar.Infrastructure.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -162,43 +158,7 @@ namespace RentACar.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("RentACar.Infrastructure.Data.Models.User.RentBill", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CarId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("DateOfReturn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DateOfTaking")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("TownOfRent")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CarId")
-                        .IsUnique();
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Bills");
-                });
-
-            modelBuilder.Entity("RentACar.Infrastructure.Data.Models.User.User", b =>
+            modelBuilder.Entity("RentACar.Infrastructure.Data.Models.User.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -223,11 +183,13 @@ namespace RentACar.Infrastructure.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -248,7 +210,8 @@ namespace RentACar.Infrastructure.Migrations
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
@@ -282,6 +245,51 @@ namespace RentACar.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("RentACar.Infrastructure.Data.Models.User.RentBill", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CarId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DateOfReturn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateOfTaking")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("EndMileage")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StartMileage")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("TownOfRent")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CarId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Bills");
+                });
+
             modelBuilder.Entity("RentACar.Infrastructure.Data.Models.Vehicle.Car", b =>
                 {
                     b.Property<int>("Id")
@@ -305,16 +313,16 @@ namespace RentACar.Infrastructure.Migrations
 
                     b.Property<string>("Make")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("Mileage")
                         .HasColumnType("int");
 
                     b.Property<string>("Model")
                         .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("nvarchar(40)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("PricePerDay")
                         .HasColumnType("int");
@@ -324,6 +332,43 @@ namespace RentACar.Infrastructure.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Cars");
+                });
+
+            modelBuilder.Entity("RentACar.Infrastructure.Data.Models.Vehicle.CarMetrics", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<float>("BrakeWear")
+                        .HasColumnType("real");
+
+                    b.Property<int>("CarId")
+                        .HasColumnType("int");
+
+                    b.Property<float>("EngineTemperature")
+                        .HasColumnType("real");
+
+                    b.Property<DateTime>("LastServiceDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<float>("OilLevel")
+                        .HasColumnType("real");
+
+                    b.Property<float>("TireWear")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CarId")
+                        .IsUnique();
+
+                    b.ToTable("CarMetrics");
                 });
 
             modelBuilder.Entity("RentACar.Infrastructure.Data.Models.Vehicle.Category", b =>
@@ -336,7 +381,8 @@ namespace RentACar.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -354,7 +400,7 @@ namespace RentACar.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("RentACar.Infrastructure.Data.Models.User.User", null)
+                    b.HasOne("RentACar.Infrastructure.Data.Models.User.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -363,7 +409,7 @@ namespace RentACar.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("RentACar.Infrastructure.Data.Models.User.User", null)
+                    b.HasOne("RentACar.Infrastructure.Data.Models.User.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -378,7 +424,7 @@ namespace RentACar.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RentACar.Infrastructure.Data.Models.User.User", null)
+                    b.HasOne("RentACar.Infrastructure.Data.Models.User.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -387,7 +433,7 @@ namespace RentACar.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("RentACar.Infrastructure.Data.Models.User.User", null)
+                    b.HasOne("RentACar.Infrastructure.Data.Models.User.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -397,15 +443,15 @@ namespace RentACar.Infrastructure.Migrations
             modelBuilder.Entity("RentACar.Infrastructure.Data.Models.User.RentBill", b =>
                 {
                     b.HasOne("RentACar.Infrastructure.Data.Models.Vehicle.Car", "Car")
-                        .WithOne("RentBill")
-                        .HasForeignKey("RentACar.Infrastructure.Data.Models.User.RentBill", "CarId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .WithMany("RentBills")
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("RentACar.Infrastructure.Data.Models.User.User", "User")
+                    b.HasOne("RentACar.Infrastructure.Data.Models.User.ApplicationUser", "User")
                         .WithMany("RentBills")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Car");
@@ -424,15 +470,28 @@ namespace RentACar.Infrastructure.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("RentACar.Infrastructure.Data.Models.User.User", b =>
+            modelBuilder.Entity("RentACar.Infrastructure.Data.Models.Vehicle.CarMetrics", b =>
+                {
+                    b.HasOne("RentACar.Infrastructure.Data.Models.Vehicle.Car", "Car")
+                        .WithOne("Metrics")
+                        .HasForeignKey("RentACar.Infrastructure.Data.Models.Vehicle.CarMetrics", "CarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Car");
+                });
+
+            modelBuilder.Entity("RentACar.Infrastructure.Data.Models.User.ApplicationUser", b =>
                 {
                     b.Navigation("RentBills");
                 });
 
             modelBuilder.Entity("RentACar.Infrastructure.Data.Models.Vehicle.Car", b =>
                 {
-                    b.Navigation("RentBill")
+                    b.Navigation("Metrics")
                         .IsRequired();
+
+                    b.Navigation("RentBills");
                 });
 
             modelBuilder.Entity("RentACar.Infrastructure.Data.Models.Vehicle.Category", b =>

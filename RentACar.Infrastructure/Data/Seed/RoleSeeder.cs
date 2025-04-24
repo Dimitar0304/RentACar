@@ -6,9 +6,9 @@ namespace RentACar.Infrastructure.Data.Seed
     public class RoleSeeder : ISeeder
     {
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public RoleSeeder(RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
+        public RoleSeeder(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager)
         {
             _roleManager = roleManager;
             _userManager = userManager;
@@ -16,31 +16,37 @@ namespace RentACar.Infrastructure.Data.Seed
 
         public async Task SeedAsync()
         {
-            if (!await _roleManager.RoleExistsAsync("Administrator"))
+            // Create roles if they don't exist
+            string[] roleNames = { "Admin", "User" };
+            foreach (var roleName in roleNames)
             {
-                await _roleManager.CreateAsync(new IdentityRole("Administrator"));
+                if (!await _roleManager.RoleExistsAsync(roleName))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(roleName));
+                }
             }
 
             // Create admin user if it doesn't exist
-            var adminEmail = "admin@rentacar.com";
+            string adminEmail = "admin@rentacar.com";
             var adminUser = await _userManager.FindByEmailAsync(adminEmail);
 
             if (adminUser == null)
             {
-                adminUser = new User
+                adminUser = new ApplicationUser
                 {
                     UserName = adminEmail,
                     Email = adminEmail,
-                    EmailConfirmed = true,
                     FirstName = "Admin",
                     LastName = "User",
-                    Phone = "0000000000",
-                    DateRegistered = DateTime.UtcNow,
-                    Role = 1 // Assuming 1 represents Administrator role
+                    Phone = "+1234567890",
+                    EmailConfirmed = true
                 };
 
-                await _userManager.CreateAsync(adminUser, "Admin123!");
-                await _userManager.AddToRoleAsync(adminUser, "Administrator");
+                var result = await _userManager.CreateAsync(adminUser, "Admin123!");
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(adminUser, "Admin");
+                }
             }
         }
     }

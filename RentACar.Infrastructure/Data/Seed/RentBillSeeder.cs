@@ -1,6 +1,6 @@
-using RentACar.Infrastructure.Data.Models.User;
-using RentACar.Infrastructure.Data.Models.Vehicle;
 using Microsoft.EntityFrameworkCore;
+using RentACar.Infrastructure.Data.Models.Vehicle;
+using RentACar.Infrastructure.Data.Models.User;
 
 namespace RentACar.Infrastructure.Data.Seed
 {
@@ -15,65 +15,68 @@ namespace RentACar.Infrastructure.Data.Seed
 
         public async Task SeedAsync()
         {
-            if (await _context.Set<RentBill>().AnyAsync())
+            if (await _context.Bills.AnyAsync())
+            {
                 return; // Data already seeded
+            }
 
             var cars = await _context.Cars.ToListAsync();
+            if (!cars.Any())
+            {
+                return; // No cars to create bills for
+            }
+
             var users = await _context.Users.ToListAsync();
+            if (!users.Any())
+            {
+                return; // No users to create bills for
+            }
+
             var random = new Random();
-
-            if (!cars.Any() || !users.Any())
-                return; // No cars or users to create rentals for
-
-            var towns = new[] { "Sofia", "Plovdiv", "Varna", "Burgas", "Ruse" };
             var currentDate = DateTime.UtcNow;
 
-            // Create a variety of rental scenarios
-            foreach (var car in cars)
+            // Create some completed rentals
+            foreach (var car in cars.Take(3))
             {
-                // Create completed rentals in the past
-                for (int i = 0; i < random.Next(1, 4); i++) // 1-3 past rentals per car
+                var user = users[random.Next(users.Count)];
+                var startDate = currentDate.AddDays(-random.Next(1, 30));
+                var endDate = startDate.AddDays(random.Next(1, 7));
+                var startMileage = car.Mileage;
+                var endMileage = startMileage + random.Next(100, 1000);
+
+                var bill = new RentBill
                 {
-                    var user = users[random.Next(users.Count)];
-                    var startDate = currentDate.AddDays(-random.Next(30, 180)); // Random start date in last 6 months
-                    var duration = random.Next(1, 15); // 1-14 days rental
-                    var startMileage = car.Mileage - random.Next(100, 5000); // Calculate past mileage
-                    var drivenKm = random.Next(50, 1000);
+                    CarId = car.Id,
+                    UserId = user.Id,
+                    DateOfTaking = startDate,
+                    DateOfReturn = endDate,
+                    StartMileage = startMileage,
+                    EndMileage = endMileage,
+                    TotalPrice = random.Next(50, 500),
+                    TownOfRent = "Sofia"
+                };
 
-                    var rentBill = new RentBill
-                    {
-                        CarId = car.Id,
-                        UserId = user.Id,
-                        TownOfRent = towns[random.Next(towns.Length)],
-                        DateOfTaking = startDate,
-                        DateOfReturn = startDate.AddDays(duration),
-                        StartMileage = startMileage,
-                        EndMileage = startMileage + drivenKm
-                    };
+                await _context.Bills.AddAsync(bill);
+            }
 
-                    await _context.AddAsync(rentBill);
-                }
+            // Create some active rentals
+            foreach (var car in cars.Skip(3).Take(2))
+            {
+                var user = users[random.Next(users.Count)];
+                var startDate = currentDate.AddDays(-random.Next(1, 5));
+                var startMileage = car.Mileage;
 
-                // 30% chance of having an active rental
-                if (random.NextDouble() < 0.3 && !car.IsRented)
+                var bill = new RentBill
                 {
-                    var user = users[random.Next(users.Count)];
-                    var startDate = currentDate.AddDays(-random.Next(1, 7)); // Started within last week
-                    var startMileage = car.Mileage;
+                    CarId = car.Id,
+                    UserId = user.Id,
+                    DateOfTaking = startDate,
+                    StartMileage = startMileage,
+                    TotalPrice = 0, // Will be calculated when rental ends
+                    TownOfRent = "Sofia"
+                };
 
-                    var activeRental = new RentBill
-                    {
-                        CarId = car.Id,
-                        UserId = user.Id,
-                        TownOfRent = towns[random.Next(towns.Length)],
-                        DateOfTaking = startDate,
-                        StartMileage = startMileage,
-                        // No end date or end mileage for active rentals
-                    };
-
-                    car.IsRented = true;
-                    await _context.AddAsync(activeRental);
-                }
+                await _context.Bills.AddAsync(bill);
             }
 
             await _context.SaveChangesAsync();

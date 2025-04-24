@@ -15,7 +15,7 @@ builder.Services.AddDbContext<RentCarDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<User>(opt=>
+builder.Services.AddDefaultIdentity<ApplicationUser>(opt=>
 {
     opt.SignIn.RequireConfirmedAccount = false;
     opt.User.RequireUniqueEmail = true;
@@ -32,6 +32,9 @@ builder.Services.AddSignalR();
 
 builder.Services.AddScoped<ISeeder, CategorySeeder>();
 builder.Services.AddScoped<ISeeder, RoleSeeder>();
+builder.Services.AddScoped<ISeeder, CarSeeder>();
+builder.Services.AddScoped<ISeeder, CarMetricsSeeder>();
+builder.Services.AddScoped<ISeeder, RentBillSeeder>();
 builder.Services.AddScoped<ApplicationSeeder>();
 builder.Services.AddTransient<ICarService, CarService>();
 builder.Services.AddTransient<IChatService, ChatHubModel>();

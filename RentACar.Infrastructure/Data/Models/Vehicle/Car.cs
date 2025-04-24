@@ -9,7 +9,7 @@ namespace RentACar.Infrastructure.Data.Models.Vehicle
     {
         public Car()
         {
-            
+            RentBills = new List<RentBill>();
         }
 
         /// <summary>
@@ -77,7 +77,10 @@ namespace RentACar.Infrastructure.Data.Models.Vehicle
         [Required]
         public int PricePerDay { get; set; }
 
-        public required RentBill RentBill { get; set; }
+        /// <summary>
+        /// Rent bills associated with this car
+        /// </summary>
+        public ICollection<RentBill> RentBills { get; set; }
 
         /// <summary>
         /// Car maintenance metrics

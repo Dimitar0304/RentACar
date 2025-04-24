@@ -1,13 +1,14 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35806.99
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentACar", "RentACar\RentACar.csproj", "{09813B04-55AB-4DA5-8FA4-7AB75345125E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RentACar", "RentACar\RentACar.csproj", "{YOUR-GUID-1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentACar.Infrastructure", "RentACar.Infrastructure\RentACar.Infrastructure.csproj", "{22A988BF-8804-4516-9ED3-45E45CD208FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RentACar.Core", "RentACar.Core\RentACar.Core.csproj", "{YOUR-GUID-2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentACar.Core", "RentACar.Core\RentACar.Core.csproj", "{F3CF768E-6287-4EAA-918D-E9D165C6CC18}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RentACar.Infrastructure", "RentACar.Infrastructure\RentACar.Infrastructure.csproj", "{YOUR-GUID-3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RentACar.ML", "RentACar.ML\RentACar.ML.csproj", "{YOUR-GUID-4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,23 +16,27 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{09813B04-55AB-4DA5-8FA4-7AB75345125E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{09813B04-55AB-4DA5-8FA4-7AB75345125E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{09813B04-55AB-4DA5-8FA4-7AB75345125E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{09813B04-55AB-4DA5-8FA4-7AB75345125E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{22A988BF-8804-4516-9ED3-45E45CD208FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{22A988BF-8804-4516-9ED3-45E45CD208FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{22A988BF-8804-4516-9ED3-45E45CD208FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{22A988BF-8804-4516-9ED3-45E45CD208FA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F3CF768E-6287-4EAA-918D-E9D165C6CC18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F3CF768E-6287-4EAA-918D-E9D165C6CC18}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F3CF768E-6287-4EAA-918D-E9D165C6CC18}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F3CF768E-6287-4EAA-918D-E9D165C6CC18}.Release|Any CPU.Build.0 = Release|Any CPU
+		{YOUR-GUID-1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{YOUR-GUID-1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{YOUR-GUID-1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{YOUR-GUID-1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{YOUR-GUID-2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{YOUR-GUID-2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{YOUR-GUID-2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{YOUR-GUID-2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{YOUR-GUID-3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{YOUR-GUID-3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{YOUR-GUID-3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{YOUR-GUID-3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{YOUR-GUID-4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{YOUR-GUID-4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{YOUR-GUID-4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{YOUR-GUID-4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {2C9AC8FC-3CD2-45A7-BFC5-F348AE3BC50C}
+		SolutionGuid = {YOUR-SOLUTION-GUID}
 	EndGlobalSection
 EndGlobal
