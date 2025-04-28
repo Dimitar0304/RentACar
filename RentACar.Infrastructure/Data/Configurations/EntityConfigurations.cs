@@ -56,42 +56,6 @@ namespace RentACar.Infrastructure.Data.Configurations
                 .WithMany(cat => cat.Cars)
                 .HasForeignKey(c => c.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasMany(c => c.RentBills)
-                .WithOne(r => r.Car)
-                .HasForeignKey(r => r.CarId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasOne(c => c.Metrics)
-                .WithOne(m => m.Car)
-                .HasForeignKey<CarMetrics>(m => m.CarId)
-                .OnDelete(DeleteBehavior.Cascade);
-        }
-    }
-
-    public class CarMetricsConfiguration : IEntityTypeConfiguration<CarMetrics>
-    {
-        public void Configure(EntityTypeBuilder<CarMetrics> builder)
-        {
-            builder.HasKey(m => m.Id);
-
-            builder.Property(m => m.EngineTemperature)
-                .IsRequired();
-
-            builder.Property(m => m.OilLevel)
-                .IsRequired();
-
-            builder.Property(m => m.TireWear)
-                .IsRequired();
-
-            builder.Property(m => m.BrakeWear)
-                .IsRequired();
-
-            builder.Property(m => m.LastServiceDate)
-                .IsRequired();
-
-            builder.Property(m => m.LastUpdated)
-                .IsRequired();
         }
     }
 
@@ -104,10 +68,6 @@ namespace RentACar.Infrastructure.Data.Configurations
             builder.Property(c => c.Name)
                 .IsRequired()
                 .HasMaxLength(50);
-
-            builder.HasMany(c => c.Cars)
-                .WithOne(car => car.Category)
-                .HasForeignKey(car => car.CategoryId);
         }
     }
 
@@ -115,32 +75,23 @@ namespace RentACar.Infrastructure.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<RentBill> builder)
         {
-            builder.HasKey(r => r.Id);
+            builder.HasKey(rb => rb.Id);
 
-            builder.Property(r => r.DateOfTaking)
-                .IsRequired();
-
-            builder.Property(r => r.DateOfReturn)
-                .IsRequired(false);
-
-            builder.Property(r => r.StartMileage)
-                .IsRequired();
-
-            builder.Property(r => r.EndMileage)
-                .IsRequired(false);
-
-            builder.Property(r => r.TotalPrice)
+            builder.Property(rb => rb.TownOfRent)
                 .IsRequired()
+                .HasMaxLength(30);
+
+            builder.Property(rb => rb.TotalPrice)
                 .HasPrecision(18, 2);
 
-            builder.HasOne(r => r.Car)
-                .WithMany(c => c.RentBills)
-                .HasForeignKey(r => r.CarId)
+            builder.HasOne(rb => rb.User)
+                .WithMany(u => u.RentBills)
+                .HasForeignKey(rb => rb.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(r => r.User)
-                .WithMany(u => u.RentBills)
-                .HasForeignKey(r => r.UserId)
+            builder.HasOne(rb => rb.Car)
+                .WithMany(c => c.RentBills)
+                .HasForeignKey(rb => rb.CarId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

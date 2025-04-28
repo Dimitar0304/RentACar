@@ -33,16 +33,7 @@ namespace RentACar.Core.Services.CarDto
                     Mileage = car.Mileage,
                     ImageUrl = car.ImageUrl,
                     PricePerDay = car.PricePerDay,
-                    RentBills = new List<RentBill>(),
-                    Metrics = new CarMetrics
-                    {
-                        LastServiceDate = DateTime.UtcNow,
-                        EngineTemperature = 85,
-                        OilLevel = 1.0f,
-                        TireWear = 0,
-                        BrakeWear = 0,
-                        LastUpdated = DateTime.UtcNow
-                    }
+                    RentBills = new List<RentBill>()
                 };
 
                 await dbContext.AddAsync(c);

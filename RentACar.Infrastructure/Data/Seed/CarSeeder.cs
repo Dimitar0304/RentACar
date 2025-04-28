@@ -34,16 +34,7 @@ namespace RentACar.Infrastructure.Data.Seed
                     IsRented = false,
                     Mileage = 0,
                     PricePerDay = 50,
-                    RentBills = new List<RentBill>(),
-                    Metrics = new CarMetrics
-                    {
-                        LastServiceDate = DateTime.UtcNow,
-                        EngineTemperature = 85,
-                        OilLevel = 1.0f,
-                        TireWear = 0,
-                        BrakeWear = 0,
-                        LastUpdated = DateTime.UtcNow
-                    }
+                    RentBills = new List<RentBill>()
                 },
                 new Car { 
                     Make = "Honda", 
@@ -55,16 +46,7 @@ namespace RentACar.Infrastructure.Data.Seed
                     IsRented = false,
                     Mileage = 0,
                     PricePerDay = 45,
-                    RentBills = new List<RentBill>(),
-                    Metrics = new CarMetrics
-                    {
-                        LastServiceDate = DateTime.UtcNow,
-                        EngineTemperature = 85,
-                        OilLevel = 1.0f,
-                        TireWear = 0,
-                        BrakeWear = 0,
-                        LastUpdated = DateTime.UtcNow
-                    }
+                    RentBills = new List<RentBill>()
                 },
                 new Car { 
                     Make = "BMW", 
@@ -76,16 +58,7 @@ namespace RentACar.Infrastructure.Data.Seed
                     IsRented = false,
                     Mileage = 0,
                     PricePerDay = 80,
-                    RentBills = new List<RentBill>(),
-                    Metrics = new CarMetrics
-                    {
-                        LastServiceDate = DateTime.UtcNow,
-                        EngineTemperature = 85,
-                        OilLevel = 1.0f,
-                        TireWear = 0,
-                        BrakeWear = 0,
-                        LastUpdated = DateTime.UtcNow
-                    }
+                    RentBills = new List<RentBill>()
                 }
             });
 

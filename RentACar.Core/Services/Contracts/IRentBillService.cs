@@ -1,6 +1,13 @@
-public interface IRentBillService
+using RentACar.Core.Models.RentBillDto;
+
+namespace RentACar.Core.Services.Contracts
+{
+    public interface IRentBillService
     {
-        Task StartRental(int carId, string userId);
-        Task EndRental(int carId, int endMileage);
-        // ... other existing methods ...
+        Task<IEnumerable<RentBillViewModel>> GetAllRentBillsAsync();
+        Task<IEnumerable<RentBillViewModel>> GetUserRentBillsAsync(string userId);
+        Task<RentBillViewModel?> GetRentBillByIdAsync(int rentBillId);
+        Task<bool> ReturnCarAsync(int rentBillId, int endMileage);
+        Task<int> CreateRentBillAsync(RentBillInputModel model);
     }
+}

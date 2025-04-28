@@ -1,99 +1,153 @@
-using RentACar.Core.Models.ML;
-using RentACar.Core.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using RentACar.Infrastructure.Data.Models.User;
+using RentACar.Core.Models.RentBillDto;
+using RentACar.Core.Services.Contracts;
 using RentACar.Infrastructure.Data;
+using RentACar.Infrastructure.Data.Models.User;
 
 namespace RentACar.Core.Services
 {
     public class RentBillService : IRentBillService
     {
-        private readonly ICarMetricsService _metricsService;
-        private readonly IMaintenancePredictionService _predictionService;
-        private readonly RentCarDbContext _context;
+        private readonly RentCarDbContext dbContext;
 
-        public RentBillService(ICarMetricsService metricsService,
-                             IMaintenancePredictionService predictionService,
-                             RentCarDbContext context)
+        public RentBillService(RentCarDbContext context)
         {
-            _metricsService = metricsService;
-            _predictionService = predictionService;
-            _context = context;
+            dbContext = context;
         }
 
-        public async Task StartRental(int carId, string userId)
+        public async Task<IEnumerable<RentBillViewModel>> GetAllRentBillsAsync()
         {
-            var car = await _context.Cars.FindAsync(carId);
-            
-            if (car == null)
-                throw new ArgumentException("Car not found");
+            var rentBills = await dbContext.Bills
+                .Include(rb => rb.Car)
+                .Include(rb => rb.User)
+                .Select(rb => new RentBillViewModel
+                {
+                    Id = rb.Id,
+                    CarId = rb.CarId,
+                    CarMake = rb.Car.Make,
+                    CarModel = rb.Car.Model,
+                    UserId = rb.UserId,
+                    UserFirstName = rb.User.FirstName,
+                    UserLastName = rb.User.LastName,
+                    DateOfTaking = rb.DateOfTaking,
+                    DateOfReturn = rb.DateOfReturn,
+                    TownOfRent = rb.TownOfRent,
+                    StartMileage = rb.StartMileage,
+                    EndMileage = rb.EndMileage,
+                    TotalPrice = rb.TotalPrice
+                })
+                .ToListAsync();
+
+            return rentBills;
+        }
+
+        public async Task<IEnumerable<RentBillViewModel>> GetUserRentBillsAsync(string userId)
+        {
+            var rentBills = await dbContext.Bills
+                .Include(rb => rb.Car)
+                .Include(rb => rb.User)
+                .Where(rb => rb.UserId == userId)
+                .Select(rb => new RentBillViewModel
+                {
+                    Id = rb.Id,
+                    CarId = rb.CarId,
+                    CarMake = rb.Car.Make,
+                    CarModel = rb.Car.Model,
+                    UserId = rb.UserId,
+                    UserFirstName = rb.User.FirstName,
+                    UserLastName = rb.User.LastName,
+                    DateOfTaking = rb.DateOfTaking,
+                    DateOfReturn = rb.DateOfReturn,
+                    TownOfRent = rb.TownOfRent,
+                    StartMileage = rb.StartMileage,
+                    EndMileage = rb.EndMileage,
+                    TotalPrice = rb.TotalPrice
+                })
+                .ToListAsync();
+
+            return rentBills;
+        }
+
+        public async Task<RentBillViewModel?> GetRentBillByIdAsync(int rentBillId)
+        {
+            var rentBill = await dbContext.Bills
+                .Include(rb => rb.Car)
+                .Include(rb => rb.User)
+                .FirstOrDefaultAsync(rb => rb.Id == rentBillId);
+
+            if (rentBill == null)
+            {
+                return null;
+            }
+
+            return new RentBillViewModel
+            {
+                Id = rentBill.Id,
+                CarId = rentBill.CarId,
+                CarMake = rentBill.Car.Make,
+                CarModel = rentBill.Car.Model,
+                UserId = rentBill.UserId,
+                UserFirstName = rentBill.User.FirstName,
+                UserLastName = rentBill.User.LastName,
+                DateOfTaking = rentBill.DateOfTaking,
+                DateOfReturn = rentBill.DateOfReturn,
+                TownOfRent = rentBill.TownOfRent,
+                StartMileage = rentBill.StartMileage,
+                EndMileage = rentBill.EndMileage,
+                TotalPrice = rentBill.TotalPrice
+            };
+        }
+
+        public async Task<bool> ReturnCarAsync(int rentBillId, int endMileage)
+        {
+            var rentBill = await dbContext.Bills
+                .Include(rb => rb.Car)
+                .FirstOrDefaultAsync(rb => rb.Id == rentBillId);
+
+            if (rentBill == null || rentBill.DateOfReturn.HasValue)
+            {
+                return false;
+            }
+
+            rentBill.DateOfReturn = DateTime.UtcNow;
+            rentBill.EndMileage = endMileage;
+            rentBill.Car.Mileage = endMileage;
+            rentBill.Car.IsRented = false;
+
+            await dbContext.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<int> CreateRentBillAsync(RentBillInputModel model)
+        {
+            var car = await dbContext.Cars.FindAsync(model.CarId);
+            if (car == null || car.IsRented)
+            {
+                throw new InvalidOperationException("Car not available for rent");
+            }
+
+            var user = await dbContext.Users.FindAsync(model.UserId);
+            if (user == null)
+            {
+                throw new InvalidOperationException("User not found");
+            }
 
             var rentBill = new RentBill
             {
-                CarId = carId,
-                UserId = userId,
+                CarId = model.CarId,
+                UserId = model.UserId,
                 DateOfTaking = DateTime.UtcNow,
-                StartMileage = car.Mileage // Store initial mileage
+                TownOfRent = model.TownOfRent,
+                StartMileage = car.Mileage,
+                TotalPrice = model.TotalPrice
             };
 
-            // Initialize or update metrics at rental start
-            await _metricsService.UpdateMetricsOnRentalStart(carId);
-        }
+            car.IsRented = true;
 
-        public async Task EndRental(int rentBillId)
-        {
-            var rentBill = await _context.Bills
-                .Include(r => r.Car)
-                .FirstOrDefaultAsync(r => r.Id == rentBillId);
+            await dbContext.Bills.AddAsync(rentBill);
+            await dbContext.SaveChangesAsync();
 
-            if (rentBill == null)
-                throw new ArgumentException("Rent bill not found");
-
-            rentBill.EndMileage = rentBill.Car.Mileage;
-            rentBill.DateOfReturn = DateTime.UtcNow;
-
-            await _metricsService.UpdateMetricsOnRentalEnd(rentBill.CarId, rentBill.EndMileage.Value);
-            await _context.SaveChangesAsync();
-
-            var maintenanceData = await _metricsService.GetMaintenancePredictionData(rentBill.CarId);
-            var prediction = await _predictionService.PredictMaintenanceAsync(maintenanceData);
-
-            if (prediction.NeedsService)
-            {
-                await NotifyMaintenanceNeeded(rentBill.CarId, prediction);
-            }
-        }
-
-        // Implementing the interface method
-        public async Task EndRental(int rentBillId, int endMileage)
-        {
-            var rentBill = await _context.Bills
-                .Include(r => r.Car)
-                .FirstOrDefaultAsync(r => r.Id == rentBillId);
-
-            if (rentBill == null)
-                throw new ArgumentException("Rent bill not found");
-
-            rentBill.EndMileage = endMileage;
-            rentBill.DateOfReturn = DateTime.UtcNow;
-
-            await _metricsService.UpdateMetricsOnRentalEnd(rentBill.CarId, endMileage);
-            await _context.SaveChangesAsync();
-
-            var maintenanceData = await _metricsService.GetMaintenancePredictionData(rentBill.CarId);
-            var prediction = await _predictionService.PredictMaintenanceAsync(maintenanceData);
-
-            if (prediction.NeedsService)
-            {
-                await NotifyMaintenanceNeeded(rentBill.CarId, prediction);
-            }
-        }
-
-        private async Task NotifyMaintenanceNeeded(int carId, MaintenancePrediction prediction)
-        {
-            // TODO: Implement notification logic
-            // This could send emails, create maintenance tickets, etc.
-            await Task.CompletedTask;
+            return rentBill.Id;
         }
     }
 } 

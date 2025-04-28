@@ -72,19 +72,14 @@ namespace RentACar.Infrastructure.Data.Models.Vehicle
         public required string ImageUrl { get; set; }
 
         /// <summary>
-        /// Price per day
+        /// Car price per day
         /// </summary>
         [Required]
         public int PricePerDay { get; set; }
 
         /// <summary>
-        /// Rent bills associated with this car
+        /// Navigation property for rent bills
         /// </summary>
         public ICollection<RentBill> RentBills { get; set; }
-
-        /// <summary>
-        /// Car maintenance metrics
-        /// </summary>
-        public required CarMetrics Metrics { get; set; }
     }
 }

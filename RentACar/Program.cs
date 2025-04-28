@@ -33,7 +33,6 @@ builder.Services.AddSignalR();
 builder.Services.AddScoped<ISeeder, CategorySeeder>();
 builder.Services.AddScoped<ISeeder, RoleSeeder>();
 builder.Services.AddScoped<ISeeder, CarSeeder>();
-builder.Services.AddScoped<ISeeder, CarMetricsSeeder>();
 builder.Services.AddScoped<ISeeder, RentBillSeeder>();
 builder.Services.AddScoped<ApplicationSeeder>();
 builder.Services.AddTransient<ICarService, CarService>();

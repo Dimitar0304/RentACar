@@ -24,7 +24,6 @@ namespace RentACar.Infrastructure.Data.Seed
                 ),
                 new CategorySeeder(_serviceProvider.GetRequiredService<RentCarDbContext>()),
                 new CarSeeder(_serviceProvider.GetRequiredService<RentCarDbContext>()),
-                new CarMetricsSeeder(_serviceProvider.GetRequiredService<RentCarDbContext>()),
                 new RentBillSeeder(_serviceProvider.GetRequiredService<RentCarDbContext>())
             };
 
