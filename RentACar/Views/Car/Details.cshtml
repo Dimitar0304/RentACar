@@ -60,11 +60,11 @@
                 <div class="action-buttons mt-4">
                     @if (!Model.IsRented)
                     {
-                        <a href="@Url.Action("Rent", "Cars", new { id = Model.Id })" class="btn btn-primary btn-lg">
+                        <a href="@Url.Action("Rent", "Car", new { id = Model.Id })" class="btn btn-primary btn-lg">
                             <i class="fas fa-key"></i> Rent Now
                         </a>
                     }
-                    <a href="@Url.Action("Search", "Cars")" class="btn btn-outline-secondary btn-lg ms-2">
+                    <a href="@Url.Action("Search", "Car")" class="btn btn-outline-secondary btn-lg ms-2">
                         <i class="fas fa-arrow-left"></i> Back to Search
                     </a>
                 </div>
