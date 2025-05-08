@@ -7,6 +7,7 @@ using RentACar.Core.Services.Contracts;
 using RentACar.Infrastructure.Data;
 using RentACar.Infrastructure.Data.Models.User;
 using RentACar.Infrastructure.Data.Seed;
+using RentACar.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,8 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(opt=>
     opt.Password.RequireDigit = false;
     opt.Password.RequireNonAlphanumeric = false;
     opt.Password.RequireUppercase = false;
+    opt.Password.RequireLowercase = false;
+    
 })
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<RentCarDbContext>();
@@ -55,10 +58,14 @@ else
     app.UseHsts();
 }
 
-app.UseHttpsRedirection().
-    UseStaticFiles().
-    UseRouting().
-    UseAuthorization();
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+app.UseRouting();
+
+app.UseAuthorization();
 
 app.UseResponseCompression();
 
