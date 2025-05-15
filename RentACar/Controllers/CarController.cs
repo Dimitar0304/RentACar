@@ -34,6 +34,7 @@ namespace RentACar.Controllers
                     Id = c.Id,
                     Make = c.Make,
                     Model = c.Model,
+                    Category = c.Category.Name,
                     Hp = c.Hp,
                     ImageUrl = c.ImageUrl,
                     PricePerDay = c.PricePerDay

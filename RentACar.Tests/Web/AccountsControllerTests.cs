@@ -3,12 +3,25 @@ using Moq;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using RentACar.Controllers;
 using RentACar.Core.Models.Account;
 using RentACar.Infrastructure.Data.Models.User;
 
 namespace RentACar.Tests.Web
 {
+    // Define TestConstants if not available elsewhere in the test project
+    internal static class TestConstants 
+    {
+        internal static class User
+        {
+            internal const string TestEmail = "test@example.com";
+            internal const string TestPassword = "Password123!";
+            internal const string TestFirstName = "Test";
+            internal const string TestLastName = "User";
+        }
+    }
+
     public class AccountsControllerTests
     {
         private readonly Mock<UserManager<ApplicationUser>> _userManagerMock;
@@ -63,7 +76,7 @@ namespace RentACar.Tests.Web
                 model.Password,
                 It.IsAny<bool>(),
                 It.IsAny<bool>()))
-                .ReturnsAsync(SignInResult.Success);
+                .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Success);
 
             // Act
             var result = await _controller.Login(model);
