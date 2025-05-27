@@ -1,155 +1,268 @@
-using Xunit;
-using Moq;
-using FluentAssertions;
-using RentACar.Controllers;
-using RentACar.Core.Services.Contracts;
-using Microsoft.AspNetCore.Mvc;
-using RentACar.Core.Models.CarDto;
+using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using RentACar.Infrastructure.Data;
-using Microsoft.Extensions.Logging;
 using System.Linq;
-using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
-using System.Threading;
-using Microsoft.EntityFrameworkCore.Query;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Moq;
+using RentACar.Core.Models.CarDto;
+using RentACar.Core.Services.Contracts;
+using RentACar.Infrastructure.Data.Models.Vehicle;
+using RentACar.Web.Controllers;
+using Xunit;
+using FluentAssertions;
+using RentACar.Tests.Constants;
 
 namespace RentACar.Tests.Web
 {
     public class CarControllerTests
     {
         private readonly Mock<ICarService> _carServiceMock;
-        private readonly Mock<RentCarDbContext> _dbContextMock;
         private readonly CarController _controller;
 
         public CarControllerTests()
         {
             _carServiceMock = new Mock<ICarService>();
-            var options = new DbContextOptionsBuilder<RentCarDbContext>()
-                .UseInMemoryDatabase(databaseName: System.Guid.NewGuid().ToString())
-                .Options;
-            _dbContextMock = new Mock<RentCarDbContext>(options);
-
-            _controller = new CarController(_carServiceMock.Object, _dbContextMock.Object);
+            _controller = new CarController(_carServiceMock.Object);
         }
 
         [Fact]
         public async Task All_ShouldReturnViewResult_WithListOfCarAllViewModel()
         {
             // Arrange
-            var expectedCars = new List<CarAllViewModel>
+            var cars = new List<CarAllViewModel>
             {
-                new CarAllViewModel { Id = 1, Make = "Toyota", Model = "Camry", Hp = 180, ImageUrl = "url1", PricePerDay = 50, Category = "Sedan" },
-                new CarAllViewModel { Id = 2, Make = "Honda", Model = "Civic", Hp = 150, ImageUrl = "url2", PricePerDay = 40, Category = "Sedan" }
+                new CarAllViewModel
+                {
+                    Id = 1,
+                    Make = TestConstants.Car.TestBrand,
+                    Model = TestConstants.Car.TestModel,
+                    Year = TestConstants.Car.TestYear,
+                    PricePerDay = TestConstants.Car.TestPrice
+                }
             };
-            
-            _carServiceMock.Setup(s => s.GetAllCarsAsync()).ReturnsAsync(expectedCars);
 
-            var carEntities = new List<RentACar.Infrastructure.Data.Models.Vehicle.Car>
-            {
-                 new RentACar.Infrastructure.Data.Models.Vehicle.Car { Id = 1, Make = "Toyota", Model = "Camry", CategoryId = 1, Hp = 180, ImageUrl = "url1", PricePerDay = 50, Category = new RentACar.Infrastructure.Data.Models.Vehicle.Category{Id = 1, Name="Sedan"} },
-                 new RentACar.Infrastructure.Data.Models.Vehicle.Car { Id = 2, Make = "Honda", Model = "Civic", CategoryId = 1, Hp = 150, ImageUrl = "url2", PricePerDay = 40, Category = new RentACar.Infrastructure.Data.Models.Vehicle.Category{Id = 1, Name="Sedan"} }
-            }.AsQueryable();
-
-            var dbSetMock = new Mock<DbSet<RentACar.Infrastructure.Data.Models.Vehicle.Car>>();
-            dbSetMock.As<IQueryable<RentACar.Infrastructure.Data.Models.Vehicle.Car>>().Setup(m => m.Provider).Returns(new TestAsyncQueryProvider<RentACar.Infrastructure.Data.Models.Vehicle.Car>(carEntities.Provider));
-            dbSetMock.As<IQueryable<RentACar.Infrastructure.Data.Models.Vehicle.Car>>().Setup(m => m.Expression).Returns(carEntities.Expression);
-            dbSetMock.As<IQueryable<RentACar.Infrastructure.Data.Models.Vehicle.Car>>().Setup(m => m.ElementType).Returns(carEntities.ElementType);
-            dbSetMock.As<IQueryable<RentACar.Infrastructure.Data.Models.Vehicle.Car>>().Setup(m => m.GetEnumerator()).Returns(() => ((IEnumerable<RentACar.Infrastructure.Data.Models.Vehicle.Car>)carEntities).GetEnumerator());
-            
-            dbSetMock.As<IAsyncEnumerable<RentACar.Infrastructure.Data.Models.Vehicle.Car>>()
-                .Setup(d => d.GetAsyncEnumerator(It.IsAny<CancellationToken>()))
-                .Returns(new TestAsyncEnumerator<RentACar.Infrastructure.Data.Models.Vehicle.Car>(((IEnumerable<RentACar.Infrastructure.Data.Models.Vehicle.Car>)carEntities).GetEnumerator()));
-
-            _dbContextMock.Setup(c => c.Cars).Returns(dbSetMock.Object);
+            _carServiceMock.Setup(x => x.GetAllCarsAsync())
+                .ReturnsAsync(cars);
 
             // Act
             var result = await _controller.All();
 
             // Assert
-            var viewResult = result.Should().BeOfType<ViewResult>().Subject;
-            var model = viewResult.Model.Should().BeAssignableTo<IEnumerable<CarAllViewModel>>().Subject.ToList();
-            model.Should().HaveCount(2);
-            
-            model[0].Category.Should().Be("Sedan");
-            model[1].Category.Should().Be("Sedan");
-
-            model.Should().BeEquivalentTo(expectedCars);
+            result.Should().BeOfType<ViewResult>();
+            var viewResult = result as ViewResult;
+            var model = viewResult.Model as List<CarAllViewModel>;
+            model.Should().NotBeNull();
+            model.Should().HaveCount(1);
+            model.First().Make.Should().Be(TestConstants.Car.TestBrand);
         }
-    }
 
-    internal class TestAsyncQueryProvider<TEntity> : IAsyncQueryProvider
-    {
-        private readonly IQueryProvider _inner;
-
-        internal TestAsyncQueryProvider(IQueryProvider inner)
+        [Fact]
+        public async Task Details_WithValidId_ShouldReturnViewResult_WithCarDetailsViewModel()
         {
-            _inner = inner;
+            // Arrange
+            var carId = 1;
+            var car = new CarDetailsViewModel
+            {
+                Id = carId,
+                Make = TestConstants.Car.TestBrand,
+                Model = TestConstants.Car.TestModel,
+                Year = TestConstants.Car.TestYear,
+                PricePerDay = TestConstants.Car.TestPrice
+            };
+
+            _carServiceMock.Setup(x => x.GetCarByIdAsync(carId))
+                .ReturnsAsync(car);
+
+            // Act
+            var result = await _controller.Details(carId);
+
+            // Assert
+            result.Should().BeOfType<ViewResult>();
+            var viewResult = result as ViewResult;
+            var model = viewResult.Model as CarDetailsViewModel;
+            model.Should().NotBeNull();
+            model.Id.Should().Be(carId);
+            model.Make.Should().Be(TestConstants.Car.TestBrand);
         }
 
-        public IQueryable CreateQuery(Expression expression)
+        [Fact]
+        public async Task Details_WithInvalidId_ShouldReturnNotFound()
         {
-            return new TestAsyncEnumerable<TEntity>(expression);
+            // Arrange
+            var carId = 999;
+            _carServiceMock.Setup(x => x.GetCarByIdAsync(carId))
+                .ReturnsAsync((CarDetailsViewModel)null);
+
+            // Act
+            var result = await _controller.Details(carId);
+
+            // Assert
+            result.Should().BeOfType<NotFoundResult>();
         }
 
-        public IQueryable<TElement> CreateQuery<TElement>(Expression expression)
+        [Fact]
+        public async Task Create_Get_ShouldReturnViewResult()
         {
-            return new TestAsyncEnumerable<TElement>(expression);
+            // Act
+            var result = await _controller.Create();
+
+            // Assert
+            result.Should().BeOfType<ViewResult>();
         }
 
-        public object Execute(Expression expression)
+        [Fact]
+        public async Task Create_Post_WithValidData_ShouldRedirectToAll()
         {
-            return _inner.Execute(expression);
+            // Arrange
+            var carViewModel = new CarViewModel
+            {
+                Make = TestConstants.Car.TestBrand,
+                Model = TestConstants.Car.TestModel,
+                Year = TestConstants.Car.TestYear,
+                PricePerDay = TestConstants.Car.TestPrice
+            };
+
+            _carServiceMock.Setup(x => x.AddCarAsync(carViewModel))
+                .Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _controller.Create(carViewModel);
+
+            // Assert
+            result.Should().BeOfType<RedirectToActionResult>()
+                .Which.ActionName.Should().Be("All");
+            _carServiceMock.Verify(x => x.AddCarAsync(carViewModel), Times.Once);
         }
 
-        public TResult Execute<TResult>(Expression expression)
+        [Fact]
+        public async Task Create_Post_WithInvalidData_ShouldReturnViewResult()
         {
-            return _inner.Execute<TResult>(expression);
+            // Arrange
+            var carViewModel = new CarViewModel();
+            _controller.ModelState.AddModelError("Make", "The Make field is required.");
+
+            // Act
+            var result = await _controller.Create(carViewModel);
+
+            // Assert
+            result.Should().BeOfType<ViewResult>();
+            _controller.ModelState.IsValid.Should().BeFalse();
         }
 
-        public TResult ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken)
+        [Fact]
+        public async Task Edit_Get_WithValidId_ShouldReturnViewResult_WithCarViewModel()
         {
-            return Execute<TResult>(expression);
+            // Arrange
+            var carId = 1;
+            var car = new CarViewModel
+            {
+                Id = carId,
+                Make = TestConstants.Car.TestBrand,
+                Model = TestConstants.Car.TestModel,
+                Year = TestConstants.Car.TestYear,
+                PricePerDay = TestConstants.Car.TestPrice
+            };
+
+            _carServiceMock.Setup(x => x.GetCarByIdAsync(carId))
+                .ReturnsAsync(car);
+
+            // Act
+            var result = await _controller.Edit(carId);
+
+            // Assert
+            result.Should().BeOfType<ViewResult>();
+            var viewResult = result as ViewResult;
+            var model = viewResult.Model as CarViewModel;
+            model.Should().NotBeNull();
+            model.Id.Should().Be(carId);
+            model.Make.Should().Be(TestConstants.Car.TestBrand);
         }
-    }
 
-    internal class TestAsyncEnumerable<T> : EnumerableQuery<T>, IAsyncEnumerable<T>, IQueryable<T>
-    {
-        public TestAsyncEnumerable(IEnumerable<T> enumerable)
-            : base(enumerable) { }
-
-        public TestAsyncEnumerable(Expression expression)
-            : base(expression) { }
-
-        public IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        [Fact]
+        public async Task Edit_Get_WithInvalidId_ShouldReturnNotFound()
         {
-            return new TestAsyncEnumerator<T>(this.AsEnumerable().GetEnumerator());
+            // Arrange
+            var carId = 999;
+            _carServiceMock.Setup(x => x.GetCarByIdAsync(carId))
+                .ReturnsAsync((CarViewModel)null);
+
+            // Act
+            var result = await _controller.Edit(carId);
+
+            // Assert
+            result.Should().BeOfType<NotFoundResult>();
         }
 
-        IQueryProvider IQueryable.Provider => new TestAsyncQueryProvider<T>(this);
-    }
-
-    internal class TestAsyncEnumerator<T> : IAsyncEnumerator<T>
-    {
-        private readonly IEnumerator<T> _inner;
-
-        public TestAsyncEnumerator(IEnumerator<T> inner)
+        [Fact]
+        public async Task Edit_Post_WithValidData_ShouldRedirectToAll()
         {
-            _inner = inner;
+            // Arrange
+            var carViewModel = new CarViewModel
+            {
+                Id = 1,
+                Make = TestConstants.Car.TestBrand,
+                Model = TestConstants.Car.TestModel,
+                Year = TestConstants.Car.TestYear,
+                PricePerDay = TestConstants.Car.TestPrice
+            };
+
+            _carServiceMock.Setup(x => x.UpdateCarAsync(carViewModel))
+                .Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _controller.Edit(carViewModel);
+
+            // Assert
+            result.Should().BeOfType<RedirectToActionResult>()
+                .Which.ActionName.Should().Be("All");
+            _carServiceMock.Verify(x => x.UpdateCarAsync(carViewModel), Times.Once);
         }
 
-        public ValueTask DisposeAsync()
+        [Fact]
+        public async Task Edit_Post_WithInvalidData_ShouldReturnViewResult()
         {
-            _inner.Dispose();
-            return ValueTask.CompletedTask;
+            // Arrange
+            var carViewModel = new CarViewModel();
+            _controller.ModelState.AddModelError("Make", "The Make field is required.");
+
+            // Act
+            var result = await _controller.Edit(carViewModel);
+
+            // Assert
+            result.Should().BeOfType<ViewResult>();
+            _controller.ModelState.IsValid.Should().BeFalse();
         }
 
-        public ValueTask<bool> MoveNextAsync()
+        [Fact]
+        public async Task Delete_WithValidId_ShouldRedirectToAll()
         {
-            return new ValueTask<bool>(_inner.MoveNext());
+            // Arrange
+            var carId = 1;
+            _carServiceMock.Setup(x => x.DeleteCarAsync(carId))
+                .Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _controller.Delete(carId);
+
+            // Assert
+            result.Should().BeOfType<RedirectToActionResult>()
+                .Which.ActionName.Should().Be("All");
+            _carServiceMock.Verify(x => x.DeleteCarAsync(carId), Times.Once);
         }
 
-        public T Current => _inner.Current;
+        [Fact]
+        public async Task Delete_WithInvalidId_ShouldReturnNotFound()
+        {
+            // Arrange
+            var carId = 999;
+            _carServiceMock.Setup(x => x.DeleteCarAsync(carId))
+                .ThrowsAsync(new ArgumentException());
+
+            // Act
+            var result = await _controller.Delete(carId);
+
+            // Assert
+            result.Should().BeOfType<NotFoundResult>();
+        }
     }
 } 

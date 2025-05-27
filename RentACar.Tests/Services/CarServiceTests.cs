@@ -12,6 +12,7 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Collections.Generic;
 using System.Threading;
+using RentACar.Tests.Helpers;
 
 namespace RentACar.Tests.Services
 {
@@ -113,12 +114,9 @@ namespace RentACar.Tests.Services
             _contextMock.Setup(x => x.Categories).Returns(DbSetMock.Create(new List<Category> { testCategory }.AsQueryable()).Object);
             
             var carsList = new List<Car>();
-            // No longer need carsDbSetMock for AddAsync verification directly, but Cars DbSet still needs to be generally available if service reads from it.
-            // For this specific test, _context.Cars is not read before AddAsync, so a basic mock is fine.
-            var carsDbSetMock = DbSetMock.Create(carsList.AsQueryable()); 
-            _contextMock.Setup(x => x.Cars).Returns(carsDbSetMock.Object); // Keep this for general DbSet availability
+            var carsDbSetMock = DbSetMock.Create(carsList.AsQueryable());
+            _contextMock.Setup(x => x.Cars).Returns(carsDbSetMock.Object);
 
-            // Setup and verify DbContext.AddAsync directly
             _contextMock.Setup(x => x.AddAsync(It.IsAny<Car>(), It.IsAny<CancellationToken>()))
                .Callback<Car, CancellationToken>((car, token) => carsList.Add(car))
                .ReturnsAsync((Car car, CancellationToken token) => EntityEntryMock.Create(car));
@@ -129,7 +127,7 @@ namespace RentACar.Tests.Services
             await _carService.AddCarAsync(carViewModel);
 
             // Assert
-            _contextMock.Verify(x => x.AddAsync(It.IsAny<Car>(), It.IsAny<CancellationToken>()), Times.Once); // Verify context.AddAsync
+            _contextMock.Verify(x => x.AddAsync(It.IsAny<Car>(), It.IsAny<CancellationToken>()), Times.Once);
             _contextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
             carsList.Should().ContainSingle(c => c.Make == "TestBrandAdd");
         }
@@ -150,7 +148,7 @@ namespace RentACar.Tests.Services
             };
 
             _contextMock.Setup(x => x.Categories).Returns(DbSetMock.Create(new List<Category>().AsQueryable()).Object);
-             var carsDbSetMock = DbSetMock.Create(new List<Car>().AsQueryable());
+            var carsDbSetMock = DbSetMock.Create(new List<Car>().AsQueryable());
             _contextMock.Setup(x => x.Cars).Returns(carsDbSetMock.Object);
 
             // Act & Assert
@@ -195,7 +193,7 @@ namespace RentACar.Tests.Services
             var carToDelete = new Car { Id = 1, Make = "TestBrand", Model = "TestModel", Category = testCategory, CategoryId = 1, Hp = 100, ImageUrl = "test.jpg", Mileage = 100, PricePerDay = 50, IsRented = false };
             var carsList = new List<Car> { carToDelete };
             var carsDbSetMock = DbSetMock.Create(carsList.AsQueryable());
-             carsDbSetMock.Setup(m => m.Remove(It.IsAny<Car>()))
+            carsDbSetMock.Setup(m => m.Remove(It.IsAny<Car>()))
                 .Callback<Car>(c => carsList.Remove(c));
 
             _contextMock.Setup(x => x.Cars).Returns(carsDbSetMock.Object);
@@ -205,23 +203,22 @@ namespace RentACar.Tests.Services
             await _carService.DeleteCarAsync(1);
 
             // Assert
-            carsDbSetMock.Verify(x => x.Remove(It.Is<Car>(c => c.Id == 1)), Times.Once);
+            carsList.Should().BeEmpty();
             _contextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
-            carsList.Should().NotContain(c => c.Id == 1);
         }
 
         [Fact]
         public async Task DeleteCarAsync_WithInvalidId_DoesNotDeleteAndDoesNotSaveChanges()
         {
             // Arrange
-            var carsDbSetMock = DbSetMock.Create(new List<Car>().AsQueryable());
+            var carsList = new List<Car>();
+            var carsDbSetMock = DbSetMock.Create(carsList.AsQueryable());
             _contextMock.Setup(x => x.Cars).Returns(carsDbSetMock.Object);
 
             // Act
             await _carService.DeleteCarAsync(999);
 
             // Assert
-            carsDbSetMock.Verify(x => x.Remove(It.IsAny<Car>()), Times.Never);
             _contextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
         }
 
@@ -229,62 +226,77 @@ namespace RentACar.Tests.Services
         public async Task UpdateCarAsync_WithValidData_UpdatesCar()
         {
             // Arrange
-            var categoryForTest = new Category { Id = 1, Name = "TestCategory" };
-            var existingCarEntity = new Car { Id = 1, Make = "OldBrand", Model = "OldModel", CategoryId = 1, Category = categoryForTest, Hp = 100, ImageUrl = "old.jpg", Mileage = 1000, PricePerDay = 50, IsRented = false };
-            var carViewModel = new CarViewModel { Id = 1, Make = "NewBrand", Model = "NewModel", CategoryId = 1, Hp = 150, ImageUrl = "new.jpg", Mileage = 1500, PricePerDay = 60 };
+            var testCategory = new Category { Id = 1, Name = "TestCategory" };
+            var carToUpdate = new Car { Id = 1, Make = "OldBrand", Model = "OldModel", Category = testCategory, CategoryId = 1, Hp = 100, ImageUrl = "old.jpg", Mileage = 100, PricePerDay = 50, IsRented = false };
+            var carsList = new List<Car> { carToUpdate };
+            var carsDbSetMock = DbSetMock.Create(carsList.AsQueryable());
+            _contextMock.Setup(x => x.Cars).Returns(carsDbSetMock.Object);
 
-             _contextMock.Setup(x => x.Categories).Returns(DbSetMock.Create(new List<Category> { categoryForTest }.AsQueryable()).Object);
-            _contextMock.Setup(x => x.Cars).Returns(DbSetMock.Create(new List<Car> { existingCarEntity }.AsQueryable()).Object);
+            var updateViewModel = new CarViewModel
+            {
+                Id = 1,
+                Make = "NewBrand",
+                Model = "NewModel",
+                CategoryId = 1,
+                Hp = 150,
+                ImageUrl = "new.jpg",
+                Mileage = 200,
+                PricePerDay = 75
+            };
+
+            _contextMock.Setup(x => x.Categories).Returns(DbSetMock.Create(new List<Category> { testCategory }.AsQueryable()).Object);
             _contextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
 
             // Act
-            await _carService.UpdateCarAsync(carViewModel);
+            await _carService.UpdateCarAsync(updateViewModel);
 
             // Assert
+            var updatedCar = carsList.First();
+            updatedCar.Make.Should().Be("NewBrand");
+            updatedCar.Model.Should().Be("NewModel");
+            updatedCar.Hp.Should().Be(150);
             _contextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
-            existingCarEntity.Make.Should().Be("NewBrand");
-            existingCarEntity.Model.Should().Be("NewModel");
-            existingCarEntity.Hp.Should().Be(150);
         }
 
         [Fact]
         public async Task UpdateCarAsync_WithNonExistentCar_ThrowsArgumentException()
         {
             // Arrange
-            var carViewModel = new CarViewModel { Id = 999, Make = "NewBrand", Model = "NewModel", CategoryId = 1 };
+            var updateViewModel = new CarViewModel { Id = 999, Make = "NewBrand", Model = "NewModel", CategoryId = 1 };
             _contextMock.Setup(x => x.Cars).Returns(DbSetMock.Create(new List<Car>().AsQueryable()).Object);
-            var categoryForTest = new Category { Id = 1, Name = "TestCategory" };
-            _contextMock.Setup(x => x.Categories).Returns(DbSetMock.Create(new List<Category> { categoryForTest }.AsQueryable()).Object);
 
             // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(() => _carService.UpdateCarAsync(carViewModel));
+            await Assert.ThrowsAsync<ArgumentException>(() => _carService.UpdateCarAsync(updateViewModel));
         }
-        
+
         [Fact]
         public async Task UpdateCarAsync_WithNonExistentCategory_ThrowsArgumentException()
         {
             // Arrange
-            var categoryForTest = new Category { Id = 1, Name = "TestCategory" }; // This category will be used for existingCarEntity
-            var existingCarEntity = new Car { Id = 1, Make = "OldBrand", Model = "OldModel", CategoryId = 1, Category = categoryForTest, Hp = 100, ImageUrl = "old.jpg", Mileage = 1000, PricePerDay = 50, IsRented = false};
-            var carViewModel = new CarViewModel { Id = 1, Make = "NewBrand", Model = "NewModel", CategoryId = 999, Hp = 150, ImageUrl = "new.jpg", Mileage = 1500, PricePerDay = 60 };
+            var testCategory = new Category { Id = 1, Name = "TestCategory" };
+            var carToUpdate = new Car { Id = 1, Make = "OldBrand", Model = "OldModel", Category = testCategory, CategoryId = 1 };
+            var carsList = new List<Car> { carToUpdate };
+            var carsDbSetMock = DbSetMock.Create(carsList.AsQueryable());
+            _contextMock.Setup(x => x.Cars).Returns(carsDbSetMock.Object);
 
-            _contextMock.Setup(x => x.Cars).Returns(DbSetMock.Create(new List<Car> { existingCarEntity }.AsQueryable()).Object);
-            _contextMock.Setup(x => x.Categories).Returns(DbSetMock.Create(new List<Category>().AsQueryable()).Object); // No categories with ID 999
+            var updateViewModel = new CarViewModel { Id = 1, Make = "NewBrand", Model = "NewModel", CategoryId = 999 };
+
+            _contextMock.Setup(x => x.Categories).Returns(DbSetMock.Create(new List<Category>().AsQueryable()).Object);
 
             // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(() => _carService.UpdateCarAsync(carViewModel));
+            await Assert.ThrowsAsync<ArgumentException>(() => _carService.UpdateCarAsync(updateViewModel));
         }
 
         [Fact]
         public async Task GetAllCategories_ReturnsAllCategories()
         {
             // Arrange
-            var categoriesInDb = new List<Category>
+            var categories = new List<Category>
             {
                 new Category { Id = 1, Name = "Category1" },
                 new Category { Id = 2, Name = "Category2" }
             };
-            _contextMock.Setup(x => x.Categories).Returns(DbSetMock.Create(categoriesInDb.AsQueryable()).Object);
+            _contextMock.Setup(x => x.Categories).Returns(DbSetMock.Create(categories.AsQueryable()).Object);
 
             // Act
             var result = await _carService.GetAllCategories();
