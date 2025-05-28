@@ -29,9 +29,7 @@ jobs:
       uses: microsoft/setup-msbuild@v2
       
     - name: Restore the application
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
-      env:
-        Configuration: ${{ matrix.configuration }}
+      run: dotnet restore
 
     - name: Decode the pfx
       run: |
