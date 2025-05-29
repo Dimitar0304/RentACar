@@ -12,8 +12,8 @@ using RentACar.Infrastructure.Data;
 namespace RentACar.Infrastructure.Migrations
 {
     [DbContext(typeof(RentCarDbContext))]
-    [Migration("20250428124417_clearDbfromCarMatricesAndMlFixtures")]
-    partial class clearDbfromCarMatricesAndMlFixtures
+    [Migration("20250529103934_AddMessagesTable")]
+    partial class AddMessagesTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -249,6 +249,43 @@ namespace RentACar.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("RentACar.Infrastructure.Data.Models.User.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SenderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("SenderName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Messages");
+                });
+
             modelBuilder.Entity("RentACar.Infrastructure.Data.Models.User.RentBill", b =>
                 {
                     b.Property<int>("Id")
@@ -338,43 +375,6 @@ namespace RentACar.Infrastructure.Migrations
                     b.ToTable("Cars");
                 });
 
-            modelBuilder.Entity("RentACar.Infrastructure.Data.Models.Vehicle.CarMetrics", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<float>("BrakeWear")
-                        .HasColumnType("real");
-
-                    b.Property<int>("CarId")
-                        .HasColumnType("int");
-
-                    b.Property<float>("EngineTemperature")
-                        .HasColumnType("real");
-
-                    b.Property<DateTime>("LastServiceDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<float>("OilLevel")
-                        .HasColumnType("real");
-
-                    b.Property<float>("TireWear")
-                        .HasColumnType("real");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CarId")
-                        .IsUnique();
-
-                    b.ToTable("CarMetrics");
-                });
-
             modelBuilder.Entity("RentACar.Infrastructure.Data.Models.Vehicle.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -444,6 +444,17 @@ namespace RentACar.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("RentACar.Infrastructure.Data.Models.User.Message", b =>
+                {
+                    b.HasOne("RentACar.Infrastructure.Data.Models.User.ApplicationUser", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Sender");
+                });
+
             modelBuilder.Entity("RentACar.Infrastructure.Data.Models.User.RentBill", b =>
                 {
                     b.HasOne("RentACar.Infrastructure.Data.Models.Vehicle.Car", "Car")
@@ -474,17 +485,6 @@ namespace RentACar.Infrastructure.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("RentACar.Infrastructure.Data.Models.Vehicle.CarMetrics", b =>
-                {
-                    b.HasOne("RentACar.Infrastructure.Data.Models.Vehicle.Car", "Car")
-                        .WithOne("Metrics")
-                        .HasForeignKey("RentACar.Infrastructure.Data.Models.Vehicle.CarMetrics", "CarId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Car");
-                });
-
             modelBuilder.Entity("RentACar.Infrastructure.Data.Models.User.ApplicationUser", b =>
                 {
                     b.Navigation("RentBills");
@@ -492,9 +492,6 @@ namespace RentACar.Infrastructure.Migrations
 
             modelBuilder.Entity("RentACar.Infrastructure.Data.Models.Vehicle.Car", b =>
                 {
-                    b.Navigation("Metrics")
-                        .IsRequired();
-
                     b.Navigation("RentBills");
                 });
 

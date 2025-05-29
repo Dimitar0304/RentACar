@@ -11,8 +11,8 @@ namespace RentACar.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "CarMetrics");
+            //migrationBuilder.DropTable(
+            //    name: "CarMetrics");
         }
 
         /// <inheritdoc />

@@ -16,6 +16,7 @@ namespace RentACar.Infrastructure.Data
         public virtual DbSet<Car> Cars { get; set; }
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<RentBill> Bills { get; set; }
+        public virtual DbSet<Message> Messages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

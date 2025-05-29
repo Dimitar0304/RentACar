@@ -1,8 +1,12 @@
-﻿
+using RentACar.Core.Models.Chat;
+
 namespace RentACar.Core.Services.Contracts
 {
     public interface IChatService
     {
-        public Task SendMessage(string user, string message);
+        Task SendMessage(MessageInputModel messageModel);
+        Task UpdateMessageStatus(MessageStatusUpdateModel statusModel);
+        Task MarkMessageAsRead(MessageReadUpdateModel readModel);
+        Task GetUnreadMessages(string userId);
     }
 }
