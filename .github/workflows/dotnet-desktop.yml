@@ -30,3 +30,6 @@ jobs:
       
     - name: Restore the application
       run: dotnet restore
+
+    - name: Build
+      run: dotnet build 
