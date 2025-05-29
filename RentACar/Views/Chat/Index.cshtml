@@ -5,6 +5,11 @@
 <link rel="stylesheet" href="~/css/chat.css" />
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
+@if (TempData["MessageSent"] != null)
+{
+    <div class="alert alert-success">@TempData["MessageSent"]</div>
+}
+
 <div class="chat-container">
     <div class="chat-header">
         <h2>Real-Time Chat</h2>
@@ -70,4 +75,17 @@
         }
     });
 </script>
+
+@model RentACar.Core.Models.Chat.MessageInputModel
+
+<h2>Contact Support</h2>
+<form asp-action="SendMessage" method="post">
+    <div class="form-group">
+        <label for="Content">Your Question</label>
+        <textarea asp-for="Content" class="form-control"></textarea>
+    </div>
+    <input type="hidden" asp-for="SenderId" value="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value" />
+    <input type="hidden" asp-for="SenderName" value="@User.Identity.Name" />
+    <button type="submit" class="btn btn-primary">Send</button>
+</form>
 

@@ -20,8 +20,9 @@ namespace RentACar.Core.Models.Account
         public string Email { get; set; } = null!;
 
         [Phone(ErrorMessage = "Invalid phone number")]
-        [Display(Name = "Phone Number")]
-        public string? PhoneNumber { get; set; }
+        [Display(Name = "Phone")]
+        [Required]
+        public string? Phone { get; set; }
 
         [Required(ErrorMessage = "Password is required")]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]

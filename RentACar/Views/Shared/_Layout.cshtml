@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="~/RentACar.styles.css" asp-append-version="true" />
 </head>
 <body>
+    @inject SignInManager<ApplicationUser> SignInManager
+    @inject UserManager<ApplicationUser> UserManager
+
     <header>
         <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
@@ -25,6 +28,14 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        @if (SignInManager.IsSignedIn(User) && User.IsInRole("User"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Chat" asp-action="Index">
+                                    <i class="fas fa-headset"></i> Support
+                                </a>
+                            </li>
+                        }
                     </ul>
                     <form class="d-flex search-form mx-auto" asp-controller="Cars" asp-action="Search" method="get">
                         <div class="input-group">

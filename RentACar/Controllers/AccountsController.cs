@@ -82,10 +82,10 @@ namespace RentACar.Controllers
                 // Ensure we have a non-null phone number by using a default value if none is provided
                 string phoneNumber = "Not Provided";
                 
-                if (!string.IsNullOrWhiteSpace(model.PhoneNumber))
+                if (!string.IsNullOrWhiteSpace(model.Phone))
                 {
                     // Clean the phone number to contain only digits
-                    phoneNumber = new string(model.PhoneNumber.Where(char.IsDigit).ToArray());
+                    phoneNumber = new string(model.Phone.Where(char.IsDigit).ToArray());
                     
                     // If after cleaning we have no digits, use the default
                     if (string.IsNullOrEmpty(phoneNumber))
@@ -100,7 +100,7 @@ namespace RentACar.Controllers
                     Email = model.Email,
                     FirstName = model.FirstName,
                     LastName = model.LastName,
-                    PhoneNumber = phoneNumber,
+                    Phone = model.Phone!,
                     EmailConfirmed = true
                 };
 
