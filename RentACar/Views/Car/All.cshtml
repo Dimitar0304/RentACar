@@ -1,5 +1,20 @@
 ﻿@model IEnumerable<CarAllViewModel>
 
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 <div class="container mt-5">
     <h2 class="text-center mb-4">Our Car Collection</h2>
     
@@ -14,9 +29,33 @@
                             <a asp-action="Details" asp-route-id="@car.Id" class="btn btn-light btn-sm">
                                 <i class="fas fa-info-circle"></i> View Details
                             </a>
-                            <a asp-action="Edit" asp-route-id="@car.Id" class="btn btn-warning btn-sm">
-                                <i class="fas fa-edit"></i> Edit Car
-                            </a>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <a asp-action="Edit" asp-route-id="@car.Id" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i> Edit Car
+                                </a>
+                            }
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                @if (!car.IsRented)
+                                {
+                                    <button type="button" class="btn btn-success btn-sm rent-button" data-bs-toggle="modal" data-bs-target="#rentModal" data-car-id="@car.Id" data-car-make="@car.Make" data-car-model="@car.Model">
+                                        <i class="fas fa-money-bill-alt"></i> Rent
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-danger btn-sm" disabled>
+                                        <i class="fas fa-times-circle"></i> Rented
+                                    </button>
+                                }
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#loginPromptModal">
+                                    <i class="fas fa-sign-in-alt"></i> Login to Rent
+                                </button>
+                            }
                         </div>
                     </div>
                     <div class="car-content">
@@ -36,8 +75,8 @@
     </div>
 
     @{
-        var prevDisabled = !Model.Any() || Model.Count() < 7 ? "disabled" : "";
-        var nextDisabled = !Model.Any() || Model.Count() < 7 ? "disabled" : "";
+        var prevDisabled = ViewBag.CurrentPage == 1 ? "disabled" : "";
+        var nextDisabled = Model.Count() < 7 ? "disabled" : "";
     }
 
     <div class="d-flex justify-content-center mt-4">
@@ -66,3 +105,89 @@
         </nav>
     </div>
 </div>
+
+<!-- Rent Car Modal -->
+<div class="modal fade" id="rentModal" tabindex="-1" aria-labelledby="rentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rentModalLabel">Rent Car: <span id="modalCarName"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="rentForm" asp-controller="Car" asp-action="Rent" method="post">
+                <div class="modal-body">
+                    <input type="hidden" id="modalCarId" name="CarId" />
+                    <div class="mb-3">
+                        <label for="townOfRent" class="form-label">Town of Rent</label>
+                        <input type="text" class="form-control" id="townOfRent" name="TownOfRent" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rentDate" class="form-label">Rent Date</label>
+                        <input type="text" class="form-control" id="rentDate" name="DateOfTaking" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="returnDate" class="form-label">Return Date</label>
+                        <input type="text" class="form-control" id="returnDate" name="DateOfReturn" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Confirm Rent</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Login Prompt Modal -->
+<div class="modal fade" id="loginPromptModal" tabindex="-1" aria-labelledby="loginPromptModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loginPromptModalLabel">Login Required</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Please log in to your account to rent a car.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary">Login</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize Flatpickr
+            flatpickr("#rentDate", {
+                dateFormat: "Y-m-d",
+                minDate: "today"
+            });
+            flatpickr("#returnDate", {
+                dateFormat: "Y-m-d",
+                minDate: "today"
+            });
+
+            // Handle modal opening to set car details
+            var rentModal = document.getElementById('rentModal');
+            rentModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget; // Button that triggered the modal
+                var carId = button.getAttribute('data-car-id'); // Get the carId from the clicked button
+
+                var modalCarId = rentModal.querySelector('#modalCarId'); // Get the hidden input element
+                modalCarId.value = carId; // Set its value
+
+                var carMake = button.getAttribute('data-car-make');
+                var carModel = button.getAttribute('data-car-model');
+
+                var modalCarName = rentModal.querySelector('#modalCarName');
+                modalCarName.textContent = carMake + ' ' + carModel;
+            });
+        });
+    </script>
+}

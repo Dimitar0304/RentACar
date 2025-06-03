@@ -4,18 +4,24 @@ using RentACar.Core.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 using RentACar.Infrastructure.Data;
 using RentACar.Core.Models.CategoryDto;
+using Microsoft.AspNetCore.Authorization;
+using System.Configuration;
+using System.Security.Claims;
+using RentACar.Core.Models.RentBillDto;
 
 namespace RentACar.Controllers
 {
     public class CarController : Controller
     {
         private readonly ICarService service;
+        private readonly IRentBillService _rentBillService;
         private readonly RentCarDbContext _context;
         
-        public CarController(ICarService carService, RentCarDbContext context)
+        public CarController(ICarService carService, RentCarDbContext context, IRentBillService rentBillService)
         {
             service = carService;
             _context = context;
+            _rentBillService = rentBillService;
         }
 
         [HttpGet]
@@ -37,7 +43,8 @@ namespace RentACar.Controllers
                     Category = c.Category.Name,
                     Hp = c.Hp,
                     ImageUrl = c.ImageUrl,
-                    PricePerDay = c.PricePerDay
+                    PricePerDay = c.PricePerDay,
+                    IsRented = c.IsRented
                 })
                 .ToListAsync();
 
@@ -121,6 +128,70 @@ namespace RentACar.Controllers
             };
 
             return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Rent(RentBillInputModel model)
+        {
+            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                // This scenario should be rare due to [Authorize] but is a good fallback.
+                TempData["ErrorMessage"] = "User not authenticated.";
+                return RedirectToAction(nameof(All));
+            }
+            model.UserId = userId;
+
+            if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "Invalid rental dates or town provided.";
+                return RedirectToAction(nameof(All));
+            }
+
+            var car = await _context.Cars.FindAsync(model.CarId);
+
+            if (car == null)
+            {
+                TempData["ErrorMessage"] = "Car not found.";
+                return RedirectToAction(nameof(All));
+            }
+
+            if (car.IsRented)
+            {
+                TempData["ErrorMessage"] = "Car is already rented.";
+                return RedirectToAction(nameof(All));
+            }
+
+            // Server-side date validation to prevent invalid date ranges
+            if (model.DateOfTaking < DateTime.Today || model.DateOfReturn <= model.DateOfTaking)
+            {
+                TempData["ErrorMessage"] = "Invalid rental date range. Rent date cannot be in the past, and return date must be after rent date.";
+                return RedirectToAction(nameof(All));
+            }
+
+            // Calculate TotalPrice and set StartMileage before sending to service
+            TimeSpan rentalDuration = (model.DateOfReturn.Value - model.DateOfTaking);
+            decimal numberOfDays = (decimal)Math.Ceiling(rentalDuration.TotalDays); 
+            if (numberOfDays < 1) numberOfDays = 1; // Minimum 1 day rental
+
+            model.TotalPrice = numberOfDays * car.PricePerDay;
+            model.StartMileage = car.Mileage;
+
+            try
+            {
+                await _rentBillService.CreateRentBillAsync(model);
+                TempData["SuccessMessage"] = "Car rented successfully!";
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+            catch (Exception)
+            {
+                TempData["ErrorMessage"] = "An unexpected error occurred during the rental process.";
+            }
+
+            return RedirectToAction(nameof(All));
         }
     }
 }

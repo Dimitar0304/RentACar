@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
+using RentACar.Core.Services;
 using RentACar.Core.Services.CarDto;
 using RentACar.Core.Services.Chat;
 using RentACar.Core.Services.Contracts;
@@ -48,6 +49,7 @@ builder.Services.AddScoped<ISeeder, RentBillSeeder>();
 builder.Services.AddScoped<ApplicationSeeder>();
 builder.Services.AddTransient<ICarService, CarService>();
 builder.Services.AddTransient<IChatService, ChatHubModel>();
+builder.Services.AddTransient<IRentBillService, RentBillService>();
 builder.Services.AddResponseCompression(opts =>
 {
     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(

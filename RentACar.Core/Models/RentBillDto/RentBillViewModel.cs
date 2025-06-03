@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using RentACar.Infrastructure.Data;
 
@@ -30,13 +31,14 @@ namespace RentACar.Core.Models.RentBillDto
         public string UserLastName { get; set; } = null!;
 
         [Required]
-        public DateTime DateOfTaking { get; set; }
-
-        public DateTime? DateOfReturn { get; set; }
-
-        [Required]
         [StringLength(DataConstants.RentBill.TownMaxLenght, MinimumLength = DataConstants.RentBill.TownMinLenght)]
         public string TownOfRent { get; set; } = null!;
+
+        [DataType(DataType.Date)]
+        public DateTime DateOfTaking { get; set; }
+
+        [DataType(DataType.Date)]
+        public DateTime? DateOfReturn { get; set; }
 
         [Required]
         [Range(0, int.MaxValue)]
@@ -48,5 +50,7 @@ namespace RentACar.Core.Models.RentBillDto
         [Required]
         [Range(0, double.MaxValue)]
         public decimal TotalPrice { get; set; }
+
+        public int KilometersDriven { get; set; } // This is a calculated property from the entity
     }
 } 

@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using RentACar.Infrastructure.Data;
 
 namespace RentACar.Core.Models.RentBillDto
 {
@@ -9,14 +8,17 @@ namespace RentACar.Core.Models.RentBillDto
         public int CarId { get; set; }
 
         [Required]
-        public string UserId { get; set; } = null!;
-
-        [Required]
-        [StringLength(DataConstants.RentBill.TownMaxLenght, MinimumLength = DataConstants.RentBill.TownMinLenght)]
         public string TownOfRent { get; set; } = null!;
 
         [Required]
-        [Range(0, double.MaxValue)]
+        [DataType(DataType.Date)]
+        public DateTime DateOfTaking { get; set; }
+
+        public DateTime? DateOfReturn { get; set; }
+
+        public string UserId { get; set; } = null!;
+
         public decimal TotalPrice { get; set; }
+        public int StartMileage { get; set; }
     }
 } 
