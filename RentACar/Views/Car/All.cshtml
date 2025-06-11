@@ -39,9 +39,9 @@
                             {
                                 @if (!car.IsRented)
                                 {
-                                    <button type="button" class="btn btn-success btn-sm rent-button" data-bs-toggle="modal" data-bs-target="#rentModal" data-car-id="@car.Id" data-car-make="@car.Make" data-car-model="@car.Model">
+                                    <a asp-controller="Car" asp-action="Rent" asp-route-id="@car.Id" class="btn btn-success btn-sm">
                                         <i class="fas fa-money-bill-alt"></i> Rent
-                                    </button>
+                                    </a>
                                 }
                                 else
                                 {
@@ -103,39 +103,6 @@
                 </li>
             </ul>
         </nav>
-    </div>
-</div>
-
-<!-- Rent Car Modal -->
-<div class="modal fade" id="rentModal" tabindex="-1" aria-labelledby="rentModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="rentModalLabel">Rent Car: <span id="modalCarName"></span></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="rentForm" asp-controller="Car" asp-action="Rent" method="post">
-                <div class="modal-body">
-                    <input type="hidden" id="modalCarId" name="CarId" />
-                    <div class="mb-3">
-                        <label for="townOfRent" class="form-label">Town of Rent</label>
-                        <input type="text" class="form-control" id="townOfRent" name="TownOfRent" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="rentDate" class="form-label">Rent Date</label>
-                        <input type="text" class="form-control" id="rentDate" name="DateOfTaking" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="returnDate" class="form-label">Return Date</label>
-                        <input type="text" class="form-control" id="returnDate" name="DateOfReturn" required>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Confirm Rent</button>
-                </div>
-            </form>
-        </div>
     </div>
 </div>
 

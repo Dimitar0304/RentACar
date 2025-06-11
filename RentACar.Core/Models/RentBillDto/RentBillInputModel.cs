@@ -4,8 +4,9 @@ namespace RentACar.Core.Models.RentBillDto
 {
     public class RentBillInputModel
     {
-        [Required]
         public int CarId { get; set; }
+
+        public string UserId { get; set; } = null!;
 
         [Required]
         public string TownOfRent { get; set; } = null!;
@@ -15,8 +16,6 @@ namespace RentACar.Core.Models.RentBillDto
         public DateTime DateOfTaking { get; set; }
 
         public DateTime? DateOfReturn { get; set; }
-
-        public string UserId { get; set; } = null!;
 
         public decimal TotalPrice { get; set; }
         public int StartMileage { get; set; }

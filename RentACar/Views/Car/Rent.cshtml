@@ -1,0 +1,66 @@
+@model RentACar.Core.Models.RentBillDto.RentBillInputModel
+
+@{
+    ViewData["Title"] = "Rent Car";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Rent Car</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-controller="Car" asp-action="Rent" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                        <input type="hidden" asp-for="CarId" />
+
+                        <div class="mb-3">
+                            <label asp-for="TownOfRent" class="form-label">Town of Rent</label>
+                            <input asp-for="TownOfRent" class="form-control" />
+                            <span asp-validation-for="TownOfRent" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="DateOfTaking" class="form-label">Rent Date</label>
+                            <input asp-for="DateOfTaking" type="text" class="form-control" id="rentDate" />
+                            <span asp-validation-for="DateOfTaking" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="DateOfReturn" class="form-label">Return Date</label>
+                            <input asp-for="DateOfReturn" type="text" class="form-control" id="returnDate" />
+                            <span asp-validation-for="DateOfReturn" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary">Confirm Rent</button>
+                            <a asp-action="All" class="btn btn-secondary">Back to All Cars</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            flatpickr("#rentDate", {
+                dateFormat: "Y-m-d",
+                minDate: "today"
+            });
+            flatpickr("#returnDate", {
+                dateFormat: "Y-m-d",
+                minDate: "today"
+            });
+        });
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

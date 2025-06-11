@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Authorization;
 using System.Configuration;
 using System.Security.Claims;
 using RentACar.Core.Models.RentBillDto;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Globalization;
+using System.Linq;
 
 namespace RentACar.Controllers
 {
@@ -67,6 +70,10 @@ namespace RentACar.Controllers
             if (!string.IsNullOrEmpty(model))
             {
                 query = query.Where(c => c.Model.Contains(model));
+            }
+            if (string.IsNullOrEmpty(model)&&string.IsNullOrEmpty(make)&&maxPrice is null)
+            {
+                return RedirectToAction("All", "Car");
             }
 
             // Apply price filter
@@ -130,22 +137,63 @@ namespace RentACar.Controllers
             return View(viewModel);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Rent(int id)
+        {
+            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                TempData["ErrorMessage"] = "You must be logged in to rent a car.";
+                return RedirectToAction(nameof(All));
+            }
+
+            var car = await _context.Cars.FindAsync(id);
+            if (car == null)
+            {
+                TempData["ErrorMessage"] = "Car not found.";
+                return RedirectToAction(nameof(All));
+            }
+
+            if (car.IsRented)
+            {
+                TempData["ErrorMessage"] = "Car is already rented.";
+                return RedirectToAction(nameof(All));
+            }
+
+            // Pre-populate the model with CarId and UserId
+            var model = new RentBillInputModel
+            {
+                CarId = id,
+                UserId = userId // UserId is set here, so [Required] is not needed on model
+            };
+
+            return View(model); // Returns the new Rent.cshtml view
+        }
+
         [HttpPost]
         public async Task<IActionResult> Rent(RentBillInputModel model)
         {
             string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
             {
-                // This scenario should be rare due to [Authorize] but is a good fallback.
                 TempData["ErrorMessage"] = "User not authenticated.";
                 return RedirectToAction(nameof(All));
             }
+
             model.UserId = userId;
 
             if (!ModelState.IsValid)
             {
-                TempData["ErrorMessage"] = "Invalid rental dates or town provided.";
-                return RedirectToAction(nameof(All));
+                var errors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var error in errors)
+                {
+                    TempData["ErrorMessage"] += $"Error: {error.ErrorMessage} ";
+                }
+                if (string.IsNullOrEmpty(TempData["ErrorMessage"] as string))
+                {
+                     TempData["ErrorMessage"] = "Invalid rental dates or town provided.";
+                }
+                return View(model);
             }
 
             var car = await _context.Cars.FindAsync(model.CarId);
@@ -165,8 +213,8 @@ namespace RentACar.Controllers
             // Server-side date validation to prevent invalid date ranges
             if (model.DateOfTaking < DateTime.Today || model.DateOfReturn <= model.DateOfTaking)
             {
-                TempData["ErrorMessage"] = "Invalid rental date range. Rent date cannot be in the past, and return date must be after rent date.";
-                return RedirectToAction(nameof(All));
+                ModelState.AddModelError(string.Empty, "Invalid rental date range. Rent date cannot be in the past, and return date must be after rent date.");
+                return View(model); // Return the view to show date validation error
             }
 
             // Calculate TotalPrice and set StartMileage before sending to service
