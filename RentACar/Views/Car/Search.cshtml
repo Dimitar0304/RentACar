@@ -1,4 +1,4 @@
-@model IEnumerable<RentACar.Core.Models.CarDto.CarViewModel>
+@model IEnumerable<RentACar.Core.Models.CarDto.CarAllViewModel>
 
 @{
     ViewData["Title"] = "Search Results";
@@ -8,30 +8,6 @@
     <h2>Search Results</h2>
 
     <div class="row">
-        <!-- Filters sidebar -->
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Filters</h5>
-                    <form asp-controller="Car" asp-action="Search" method="get">
-                        <div class="mb-3">
-                            <label class="form-label">Make</label>
-                            <input type="text" name="make" class="form-control" value="@Context.Request.Query["make"]">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Model</label>
-                            <input type="text" name="model" class="form-control" value="@Context.Request.Query["model"]">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Max Price Per Day</label>
-                            <input type="number" name="maxPrice" class="form-control" placeholder="Max price" value="@Context.Request.Query["maxPrice"]">
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-
         <!-- Search results -->
         <div class="col-md-9">
             @if (!Model.Any())

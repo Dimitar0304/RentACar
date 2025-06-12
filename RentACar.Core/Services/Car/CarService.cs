@@ -3,8 +3,8 @@ using RentACar.Core.Models.CarDto;
 using RentACar.Core.Models.CategoryDto;
 using RentACar.Core.Services.Contracts;
 using RentACar.Infrastructure.Data;
-using RentACar.Infrastructure.Data.Models.Vehicle;
 using RentACar.Infrastructure.Data.Models.User;
+using RentACar.Infrastructure.Data.Models.Vehicle;
 
 namespace RentACar.Core.Services.CarDto
 {
