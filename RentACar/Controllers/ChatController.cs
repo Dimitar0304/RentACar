@@ -26,16 +26,13 @@ namespace RentACar.Controllers
         {
             if (!ModelState.IsValid)
             {
-                // If the model is invalid, return the same view with validation errors
                 return View("Index", model);
             }
 
             await chatService.SendMessage(model);
 
-            // Optionally, you can set a TempData message for confirmation
             TempData["MessageSent"] = "Your message has been sent to support.";
 
-            // Redirect to the chat index or confirmation page
             return RedirectToAction("Index");
         }
     }

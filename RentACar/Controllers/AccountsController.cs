@@ -79,15 +79,12 @@ namespace RentACar.Controllers
 
             try
             {
-                // Ensure we have a non-null phone number by using a default value if none is provided
                 string phoneNumber = "Not Provided";
                 
                 if (!string.IsNullOrWhiteSpace(model.Phone))
                 {
-                    // Clean the phone number to contain only digits
                     phoneNumber = new string(model.Phone.Where(char.IsDigit).ToArray());
                     
-                    // If after cleaning we have no digits, use the default
                     if (string.IsNullOrEmpty(phoneNumber))
                     {
                         phoneNumber = "Not Provided";

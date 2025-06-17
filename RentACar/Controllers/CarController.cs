@@ -12,12 +12,10 @@ namespace RentACar.Controllers
     {
         private readonly ICarService carService;
         private readonly IRentBillService rentBillService;
-        private readonly RentCarDbContext _context;
         
-        public CarController(ICarService _carService, RentCarDbContext context, IRentBillService _rentBillService)
+        public CarController(ICarService _carService,  IRentBillService _rentBillService)
         {
             carService = _carService;
-            _context = context;
             rentBillService = _rentBillService;
         }
 
