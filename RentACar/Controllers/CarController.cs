@@ -110,5 +110,17 @@ namespace RentACar.Controllers
 
           return RedirectToAction("All", "Car");
         }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> ViewInbox()
+        {
+            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var models = await rentBillService.GetUserRentBillsAsync(userId);
+
+            return View(models);
+        }
+
     }
 }

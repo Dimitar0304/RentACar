@@ -140,7 +140,7 @@ namespace RentACar.Core.Services
                 DateOfReturn = model.DateOfReturn,
                 TownOfRent = model.TownOfRent,
                 StartMileage = car.Mileage,
-                TotalPrice = model.DateOfTaking.Day - model.DateOfReturn.Value.Day * car.PricePerDay
+                TotalPrice = (Math.Abs(model.DateOfTaking.Day - model.DateOfReturn.Value.Day)) * car.PricePerDay
             };
 
             car.IsRented = true;

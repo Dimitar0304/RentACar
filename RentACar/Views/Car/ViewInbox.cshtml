@@ -1,0 +1,20 @@
+﻿@model IEnumerable<RentBillViewModel>
+
+
+<h2><i class="fas fa-inbox"></i> Rental Inbox</h2>
+
+<table class="table table-striped">
+@foreach(var bill in Model)
+{
+        <tr>
+            <th>Model - @bill.CarModel</th>
+            <th>Make - @bill.CarMake</th>
+            <th>Rented at - @bill.DateOfTaking</th>
+            <th>Return Day - @bill.DateOfReturn</th>
+            <th>User fullName - @bill.UserFirstName @bill.UserLastName</th>
+            <th>Town of rent - @bill.TownOfRent</th>
+            <th>Total price of rent - @bill.TotalPrice</th>
+        </tr>
+}
+</table>
+

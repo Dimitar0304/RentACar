@@ -28,11 +28,14 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        @if (SignInManager.IsSignedIn(User) && User.IsInRole("User"))
+                        @if (User.Identity.IsAuthenticated==true)
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Chat" asp-action="Index">
                                     <i class="fas fa-headset"></i> Support
+                                </a>
+                                <a class="nav-link" asp-controller="Car" asp-action="ViewInbox">
+                                    <i class="fas fa-inbox"></i> Inbox
                                 </a>
                             </li>
                         }
