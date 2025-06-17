@@ -137,14 +137,15 @@ namespace RentACar.Core.Services
                 CarId = model.CarId,
                 UserId = model.UserId,
                 DateOfTaking = DateTime.UtcNow,
+                DateOfReturn = model.DateOfReturn,
                 TownOfRent = model.TownOfRent,
                 StartMileage = car.Mileage,
-                TotalPrice = model.TotalPrice
+                TotalPrice = model.DateOfTaking.Day - model.DateOfReturn.Value.Day * car.PricePerDay
             };
 
             car.IsRented = true;
 
-            await dbContext.Bills.AddAsync(rentBill);
+            dbContext.Bills.Add(rentBill);
             await dbContext.SaveChangesAsync();
 
             return rentBill.Id;

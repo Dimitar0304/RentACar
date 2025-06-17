@@ -12,8 +12,8 @@ using RentACar.Infrastructure.Data;
 namespace RentACar.Infrastructure.Migrations
 {
     [DbContext(typeof(RentCarDbContext))]
-    [Migration("20250429123735_UpdateUserPhoneNumber")]
-    partial class UpdateUserPhoneNumber
+    [Migration("20250617113005_clearMigrations")]
+    partial class clearMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -249,6 +249,43 @@ namespace RentACar.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("RentACar.Infrastructure.Data.Models.User.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SenderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("SenderName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Messages");
+                });
+
             modelBuilder.Entity("RentACar.Infrastructure.Data.Models.User.RentBill", b =>
                 {
                     b.Property<int>("Id")
@@ -405,6 +442,17 @@ namespace RentACar.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("RentACar.Infrastructure.Data.Models.User.Message", b =>
+                {
+                    b.HasOne("RentACar.Infrastructure.Data.Models.User.ApplicationUser", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("RentACar.Infrastructure.Data.Models.User.RentBill", b =>

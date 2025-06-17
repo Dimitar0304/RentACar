@@ -12,7 +12,7 @@
                     <h5 class="card-title mb-0">Rent Car</h5>
                 </div>
                 <div class="card-body">
-                    <form asp-controller="Car" asp-action="Rent" method="post">
+                    <form asp-controller="Car" asp-action="CreateARent" method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
                         <input type="hidden" asp-for="CarId" />
 
@@ -33,10 +33,13 @@
                             <input asp-for="DateOfReturn" type="text" class="form-control" id="returnDate" />
                             <span asp-validation-for="DateOfReturn" class="text-danger"></span>
                         </div>
-
+                        <div>
+                        <input type="hidden" asp-for="CarId" />
+                        <input type="hidden" asp-for="UserId" />
+                        </div>
                         <div class="d-grid gap-2 mt-4">
                             <button type="submit" class="btn btn-primary">Confirm Rent</button>
-                            <a asp-action="All" class="btn btn-secondary">Back to All Cars</a>
+                            <a asp-action="CreateARent" class="btn btn-secondary">Back to All Cars</a>
                         </div>
                     </form>
                 </div>

@@ -39,9 +39,11 @@
                             {
                                 @if (!car.IsRented)
                                 {
-                                    <a asp-controller="Car" asp-action="Rent" asp-route-id="@car.Id" class="btn btn-success btn-sm">
-                                        <i class="fas fa-money-bill-alt"></i> Rent
-                                    </a>
+                                    <form asp-controller="Car" asp-action="Rent"class="btn btn-success btn-sm">
+                                        <input type="hidden" name="carId" value="@car.Id" />
+                                        <button type="submit" class="btn btn-success btn-sm">
+                                            <i class="fas fa-money-bill-alt"></i> Rent
+                                    </form>
                                 }
                                 else
                                 {

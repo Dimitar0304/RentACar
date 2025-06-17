@@ -1,30 +1,24 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RentACar.Core.Models.CarDto;
-using RentACar.Core.Services.Contracts;
-using Microsoft.EntityFrameworkCore;
-using RentACar.Infrastructure.Data;
-using RentACar.Core.Models.CategoryDto;
-using Microsoft.AspNetCore.Authorization;
-using System.Configuration;
-using System.Security.Claims;
 using RentACar.Core.Models.RentBillDto;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System.Globalization;
-using System.Linq;
+using RentACar.Core.Services.Contracts;
+using RentACar.Infrastructure.Data;
+using System.Security.Claims;
 
 namespace RentACar.Controllers
 {
     public class CarController : Controller
     {
         private readonly ICarService carService;
-        private readonly IRentBillService _rentBillService;
+        private readonly IRentBillService rentBillService;
         private readonly RentCarDbContext _context;
         
-        public CarController(ICarService _carService, RentCarDbContext context, IRentBillService rentBillService)
+        public CarController(ICarService _carService, RentCarDbContext context, IRentBillService _rentBillService)
         {
             carService = _carService;
             _context = context;
-            _rentBillService = rentBillService;
+            rentBillService = _rentBillService;
         }
 
         [HttpGet]
@@ -85,36 +79,16 @@ namespace RentACar.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
-            var car = await _context.Cars
-                .Include(c => c.Category)
-                .FirstOrDefaultAsync(c => c.Id == id);
+            var car = await carService.GetCarByIdAsync(id);
 
             if (car == null)
             {
                 return NotFound();
             }
 
-            var viewModel = new CarViewModel
-            {
-                Id = car.Id,
-                Make = car.Make,
-                Model = car.Model,
-                Hp = car.Hp,
-                IsRented = car.IsRented,
-                CategoryId = car.CategoryId,
-                Mileage = car.Mileage,
-                ImageUrl = car.ImageUrl,
-                PricePerDay = car.PricePerDay,
-                Categories = new[] { new CategoryViewModel 
-                { 
-                    Id = car.Category.Id,
-                    Name = car.Category.Name
-                }}
-            };
-
-            return View(viewModel);
+            return View(car);
         }
-        [HttpGet]
+        [HttpPost]
         [Authorize]
         public async Task<IActionResult> Rent(int carId)
         {
@@ -130,9 +104,11 @@ namespace RentACar.Controllers
         }
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Rent(RentBillInputModel model)
+        public async Task<IActionResult> CreateARent(RentBillInputModel model)
         {
-            return View();
+           await rentBillService.CreateRentBillAsync(model);
+
+          return RedirectToAction("All", "Car");
         }
     }
 }
