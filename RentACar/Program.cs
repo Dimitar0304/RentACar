@@ -16,6 +16,9 @@ var builder = WebApplication.CreateBuilder(args);
 var dbUrl = Environment.GetEnvironmentVariable("DATABASE_URL")
         ?? "postgres://postgres_rentcar_user:o1FygMsWeSanMEDM0JOnXXqE6tNRiQ4f@dpg-d1cjdm6r433s73fspnlg-a.oregon-postgres.render.com:5432/postgres_rentcar";
 
+
+Console.WriteLine($"DATABASE_URL: {dbUrl}");
+
 if (string.IsNullOrEmpty(dbUrl))
     throw new Exception("DATABASE_URL is not set");
 
