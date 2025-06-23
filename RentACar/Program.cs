@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
 using RentACar.Core.Services;
 using RentACar.Core.Services.CarDto;
 using RentACar.Core.Services.Chat;
@@ -13,14 +12,7 @@ using RentACar.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var dbUrl = Environment.GetEnvironmentVariable("DATABASE_URL")
-        ?? "postgres://postgres_rentcar_user:o1FygMsWeSanMEDM0JOnXXqE6tNRiQ4f@dpg-d1cjdm6r433s73fspnlg-a.oregon-postgres.render.com:5432/postgres_rentcar";
-
-
-Console.WriteLine($"DATABASE_URL: {dbUrl}");
-
-if (string.IsNullOrEmpty(dbUrl))
-    throw new Exception("DATABASE_URL is not set");
+var dbUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
 var dbUri = new Uri(dbUrl);
 var userInfo = dbUri.UserInfo.Split(':');
@@ -37,8 +29,14 @@ var connectionString = new Npgsql.NpgsqlConnectionStringBuilder
 }.ToString();
 
 builder.Services.AddDbContext<RentCarDbContext>(options =>
-    options.UseNpgsql(connectionString));
-
+    options.UseNpgsql(connectionString, sqlServerOptionsAction: sqlOptions =>
+    {
+        sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 3,
+            maxRetryDelay: TimeSpan.FromSeconds(5),
+            errorNumbersToAdd: null);
+        sqlOptions.CommandTimeout(30);
+    }));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(opt=>
@@ -105,6 +103,11 @@ app.MapControllerRoute(
 app.MapHub<ChatHubModel>("/chathub");
 app.MapRazorPages();
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<RentCarDbContext>();
+    dbContext.Database.Migrate(); 
+}
 using (var scope = app.Services.CreateScope())
 {
     var seeder = scope.ServiceProvider.GetRequiredService<ApplicationSeeder>();

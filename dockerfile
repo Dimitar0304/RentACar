@@ -8,10 +8,6 @@ COPY RentACar/*.csproj ./RentACar/
 COPY RentACar.Core/*.csproj ./RentACar.Core/
 COPY RentACar.Infrastructure/*.csproj ./RentACar.Infrastructure/
 
-RUN dotnet tool install --global dotnet-ef
-ENV PATH="$PATH:/root/.dotnet/tools"
-RUN dotnet ef database update
-
 # Restore dependencies
 RUN dotnet restore
 
