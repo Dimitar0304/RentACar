@@ -15,6 +15,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 var dbUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
+if (string.IsNullOrEmpty(dbUrl))
+    throw new Exception("DATABASE_URL is not set");
+
 var dbUri = new Uri(dbUrl);
 var userInfo = dbUri.UserInfo.Split(':');
 
