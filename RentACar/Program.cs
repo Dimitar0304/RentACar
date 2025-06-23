@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using RentACar.Core.Services;
 using RentACar.Core.Services.CarDto;
 using RentACar.Core.Services.Chat;
@@ -29,14 +30,7 @@ var connectionString = new Npgsql.NpgsqlConnectionStringBuilder
 }.ToString();
 
 builder.Services.AddDbContext<RentCarDbContext>(options =>
-    options.UseNpgsql(connectionString, sqlServerOptionsAction: sqlOptions =>
-    {
-        sqlOptions.EnableRetryOnFailure(
-            maxRetryCount: 3,
-            maxRetryDelay: TimeSpan.FromSeconds(5),
-            errorNumbersToAdd: null);
-        sqlOptions.CommandTimeout(30);
-    }));
+    options.UseNpgsql(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(opt=>
