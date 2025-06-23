@@ -25,3 +25,4 @@ COPY --from=build /out .
 
 EXPOSE 80
 ENTRYPOINT ["dotnet", "RentACar.dll"]
+CMD /bin/bash -c "sleep 15 && dotnet RentACar.dll"

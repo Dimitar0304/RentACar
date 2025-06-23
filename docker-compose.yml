@@ -1,16 +1,6 @@
 version: '3.8'
 
 services:
-  webapp:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8081:80"
-    depends_on:
-      - db
-    environment:
-      - ConnectionStrings__DefaultConnection=Server=db,1433;Database=RentACarDb;User Id=appuser;Password=appuserpass;Encrypt=True;TrustServerCertificate=True;
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
@@ -19,6 +9,14 @@ services:
     ports:
       - "1433:1433"
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+  webapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:80"
+    depends_on:
+      - db
 volumes:
   sqlvolume:
