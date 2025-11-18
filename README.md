@@ -8,7 +8,7 @@ The application is built using the .NET ecosystem with the following core techno
 
 *   **Framework:** ASP.NET Core 8.0 - A cross-platform, high-performance framework for building modern, cloud-based, internet-connected applications.
 *   **Object-Relational Mapper (ORM):** Entity Framework Core 8 - Used for database interactions, simplifying data access and management.
-*   **Database:** Microsoft SQL Server - The primary relational database used to store application data. Connection is configured via the `RentCarConnection` string in `appsettings.json`.
+*   **Database:** Microsoft SQL Server - The primary relational database used to store application data
 *   **Authentication & Authorization:** ASP.NET Core Identity - Manages user accounts, roles, and security.
 *   **Real-time Communication:** SignalR - Implemented for features like real-time chat.
 *   **Project Structure:** The solution is organized into several projects, likely following a layered architecture:
